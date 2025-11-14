@@ -321,16 +321,16 @@
                         <tr>
                             <td>9</td>
                             <td class="gpio-pin">GPIO0</td>
-                            <td class="function">TP1</td>
-                            <td>테스트 포인트 1</td>
-                            <td><span class="badge gpio">범용 GPIO</span></td>
+                            <td class="function">SS ✅</td>
+                            <td>테스트 포인트 (SPI Slave Select)</td>
+                            <td><span class="badge gpio">예비 (SPI SS)</span></td>
                         </tr>
                         <tr>
                             <td>10</td>
                             <td class="gpio-pin">GPIO1</td>
-                            <td class="function">TP2</td>
-                            <td>테스트 포인트 2</td>
-                            <td><span class="badge gpio">범용 GPIO</span></td>
+                            <td class="function">DIN ✅</td>
+                            <td>WS2812 LED Data In</td>
+                            <td><span class="badge gpio">GPIO 출력</span></td>
                         </tr>
                         <tr>
                             <td>11</td>
@@ -342,16 +342,16 @@
                         <tr>
                             <td>12</td>
                             <td class="gpio-pin">GPIO3</td>
-                            <td class="function">DIN</td>
-                            <td>WS2812 LED Data In</td>
-                            <td><span class="badge gpio">GPIO 출력</span></td>
+                            <td class="function">TP2 ✅</td>
+                            <td>테스트 포인트 2</td>
+                            <td><span class="badge gpio">범용 GPIO</span></td>
                         </tr>
                         <tr>
                             <td>13</td>
                             <td class="gpio-pin">GPIO4</td>
-                            <td class="function">SS</td>
-                            <td>테스트 포인트</td>
-                            <td><span class="badge gpio">예비 (SPI SS)</span></td>
+                            <td class="function">TP1 ✅</td>
+                            <td>테스트 포인트 1</td>
+                            <td><span class="badge gpio">범용 GPIO</span></td>
                         </tr>
                         <tr>
                             <td>14</td>
@@ -510,15 +510,56 @@ GND (핀15) - 공통 접지
             <div class="section">
                 <h2>🔍 이전 오류 원인 상세 분석</h2>
 
-                <h3>1. 핀 배치 오독 원인</h3>
+                <h3>1. 핀 배치 오독 원인 - 근본 분석</h3>
                 <div class="highlight-box important">
-                    <h4>PDF 회로도 시각적 해석 오류</h4>
-                    <p><strong>문제:</strong> U1 ESP32C3-SuperMini 심볼에서 핀 번호와 라벨을 잘못 읽음</p>
+                    <h4>❌ 왜 반복적으로 틀렸는가?</h4>
+
+                    <p><strong>핵심 문제:</strong> GPIO 번호와 Net Label을 혼동하여 매핑</p>
+
+                    <h5 style="margin-top: 15px;">오류 패턴 1: GPIO 번호 순서대로 기능을 가정</h5>
                     <ul>
-                        <li><strong>오류 1:</strong> 오른쪽 핀들(9-16)의 순서를 위→아래가 아닌 아래→위로 읽음</li>
-                        <li><strong>오류 2:</strong> Net label "TX", "RX"와 실제 GPIO 번호를 혼동</li>
-                        <li><strong>오류 3:</strong> 회로도 심볼의 물리적 배치만 보고 논리적 연결을 확인하지 않음</li>
+                        <li><strong>잘못된 추론:</strong> "GPIO 번호가 순차적이니까 기능도 순차적일 것"</li>
+                        <li><strong>예시:</strong> GPIO0→TP1, GPIO1→TP2, GPIO3→DIN, GPIO4→SS 라고 추측</li>
+                        <li><strong>실제:</strong> GPIO0→SS, GPIO1→DIN, GPIO3→TP2, GPIO4→TP1</li>
+                        <li><strong>교훈:</strong> GPIO 번호와 기능 배치는 무관! 회로도 설계자가 편의대로 배치함</li>
                     </ul>
+
+                    <h5 style="margin-top: 15px;">오류 패턴 2: 심볼 핀 위치를 읽는 방향 착각</h5>
+                    <ul>
+                        <li><strong>가정:</strong> 오른쪽 핀들을 위→아래 또는 아래→위로 순차적으로 읽음</li>
+                        <li><strong>실제:</strong> 회로도 심볼은 그리기 편의상 배치, 핀 번호는 물리적 위치와 무관</li>
+                        <li><strong>증거:</strong> 핀9(GPIO0), 핀10(GPIO1), 핀11(GPIO2)까지는 순차적이지만</li>
+                        <li>핀12는 GPIO3, 핀13은 GPIO4로 건너뜀 (GPIO4가 왜 마지막?)</li>
+                    </ul>
+
+                    <h5 style="margin-top: 15px;">오류 패턴 3: Net Label 이름의 의미론적 추측</h5>
+                    <ul>
+                        <li><strong>잘못된 추론:</strong> "TP1이 TP2보다 먼저니까 GPIO 번호도 작을 것"</li>
+                        <li><strong>실제:</strong> TP1=GPIO4, TP2=GPIO3 (번호 역순!)</li>
+                        <li><strong>원인:</strong> PCB 레이아웃에서 테스트 포인트 물리적 위치에 따라 번호 부여</li>
+                    </ul>
+
+                    <h5 style="margin-top: 15px;">오류 패턴 4: 기능 이름으로 GPIO 번호 유추</h5>
+                    <ul>
+                        <li><strong>잘못된 추론:</strong> "SS는 SPI이니까 SPI 그룹(GPIO8,9,10) 옆에 있을 것"</li>
+                        <li><strong>실제:</strong> SS=GPIO0 (전혀 다른 위치)</li>
+                        <li><strong>실제:</strong> DIN=GPIO1 (WS2812용인데 GPIO3이 아님!)</li>
+                    </ul>
+
+                    <h5 style="margin-top: 15px; color: #dc3545;">🔴 근본 원인: "추론" 대신 "추적" 해야 함!</h5>
+                    <p><strong>잘못된 방법:</strong></p>
+                    <ol>
+                        <li>GPIO 번호 보기 → 기능 이름 유추 → 테이블 작성 ❌</li>
+                        <li>심볼 핀 위치 보기 → 순서대로 읽기 → 매핑 ❌</li>
+                        <li>기능 이름 보기 → 비슷한 것끼리 묶기 → 가정 ❌</li>
+                    </ol>
+
+                    <p><strong>올바른 방법:</strong></p>
+                    <ol>
+                        <li>U1 심볼 핀1 찾기 → 핀1에서 나가는 선 추적 → Net Label 확인</li>
+                        <li>Net Label "SWITCH" 확인 → "SWITCH"로 연결된 부품 찾기 → SW1 확인</li>
+                        <li>모든 핀에 대해 반복 (추측 금지!) ✅</li>
+                    </ol>
                 </div>
 
                 <h3>2. TX/RX 혼동</h3>
@@ -596,13 +637,13 @@ GND (핀15) - 공통 접지
                         </tr>
                         <tr>
                             <td><span class="badge gpio">출력</span></td>
-                            <td>GPIO2, GPIO3</td>
+                            <td>GPIO1 (LED), GPIO2 (부저)</td>
                             <td>✅ 사용 중</td>
-                            <td>부저, LED</td>
+                            <td>WS2812, BUZZER</td>
                         </tr>
                         <tr>
                             <td><span class="badge gpio">범용</span></td>
-                            <td>GPIO0, GPIO1</td>
+                            <td>GPIO0 (SS), GPIO3, GPIO4</td>
                             <td>⚪ 예비</td>
                             <td>테스트 포인트</td>
                         </tr>

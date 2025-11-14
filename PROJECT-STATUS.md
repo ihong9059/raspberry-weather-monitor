@@ -348,10 +348,12 @@ DB_NAME=weather_db
 **정확한 GPIO 핀맵** (esp32c3_ai_super.pdf 검증 완료):
 - **I2C**: GPIO6=SDA, GPIO7=SCL ✅
 - **UART**: GPIO20=RX, GPIO21=TX ✅
-- **SPI**: GPIO8=SCK, GPIO9=MISO, GPIO10=MOSI, GPIO4=SS
+- **SPI**: GPIO8=SCK, GPIO9=MISO, GPIO10=MOSI
 - **입력**: GPIO5=SWITCH
-- **출력**: GPIO2=SPEAKER, GPIO3=DIN (WS2812)
-- **범용**: GPIO0=TP1, GPIO1=TP2
+- **출력**: GPIO2=SPEAKER, GPIO1=DIN (WS2812)
+- **범용**: GPIO0=SS, GPIO3=TP2, GPIO4=TP1
+
+**주의**: GPIO 번호와 기능 이름은 상관없음! (GPIO0=SS, GPIO1=DIN, GPIO3=TP2, GPIO4=TP1)
 
 **향후 회로도 분석 체크리스트**:
 1. 회로도 심볼의 각 핀 번호 정확히 확인
