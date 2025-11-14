@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>라즈베리파이 온습도 모니터링 시스템 - 문서 모음</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 50px;
+        }
+
+        header h1 {
+            font-size: 3em;
+            margin-bottom: 15px;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        header .icon {
+            font-size: 5em;
+            margin-bottom: 20px;
+        }
+
+        header .subtitle {
+            font-size: 1.3em;
+            opacity: 0.95;
+        }
+
+        .docs-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .doc-card {
+            background: white;
+            border-radius: 20px;
+            padding: 35px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .doc-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .doc-card .icon {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .doc-card h2 {
+            color: #667eea;
+            font-size: 1.6em;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .doc-card p {
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .doc-card .btn {
+            display: block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: all 0.3s;
+        }
+
+        .doc-card .btn:hover {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            transform: scale(1.05);
+        }
+
+        .doc-card.featured {
+            grid-column: span 1;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .doc-card.featured h2,
+        .doc-card.featured p {
+            color: white;
+        }
+
+        .doc-card.featured .btn {
+            background: white;
+            color: #f5576c;
+        }
+
+        .doc-card.featured .btn:hover {
+            background: #fff;
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .section {
+            margin: 50px 0;
+        }
+
+        .section h2 {
+            color: white;
+            font-size: 2em;
+            margin-bottom: 30px;
+            text-align: center;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .info-box {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .info-box h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        .info-box ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .info-box li {
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+            line-height: 1.6;
+        }
+
+        .info-box li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .quick-links {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 30px 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .quick-links h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .quick-link {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+
+        .quick-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        footer {
+            text-align: center;
+            color: white;
+            margin-top: 60px;
+            padding: 30px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+        }
+
+        footer p {
+            margin: 5px 0;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2em;
+            }
+
+            .docs-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .doc-card.featured {
+                grid-column: span 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="icon">📚</div>
+            <h1>프로젝트 문서 모음</h1>
+            <p class="subtitle">라즈베리파이 온습도 모니터링 시스템</p>
+        </header>
+
+        <!-- 필수 문서 -->
+        <section class="section">
+            <h2>🌟 필수 문서 (먼저 읽어보세요!)</h2>
+            <div class="docs-grid">
+                <div class="doc-card featured">
+                    <div class="icon">🎉</div>
+                    <h2>프로젝트 완료 보고서</h2>
+                    <p>프로젝트 전체 개요, 완성된 기능, 시스템 구조, 기술 스택 등 모든 정보가 시각적으로 정리되어 있습니다.</p>
+                    <a href="프로젝트완료보고서.html" class="btn">📄 문서 열기</a>
+                </div>
+
+                <div class="doc-card">
+                    <div class="icon">🚀</div>
+                    <h2>배포 가이드</h2>
+                    <p>EC2 서버 배포, AWS 설정, 서버 관리 명령어, 문제 해결 방법 등 운영에 필요한 모든 정보</p>
+                    <a href="배포가이드.html" class="btn">📄 문서 열기</a>
+                </div>
+
+                <div class="doc-card">
+                    <div class="icon">🍓</div>
+                    <h2>라즈베리파이 설정 가이드</h2>
+                    <p>AHT20 센서 연결, I2C 활성화, Python 환경 설정, Cron 자동 실행 등 라즈베리파이 설정 전체 과정</p>
+                    <a href="라즈베리파이설정가이드.html" class="btn">📄 문서 열기</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Markdown 문서 -->
+        <section class="section">
+            <h2>📝 Markdown 문서</h2>
+            <div class="docs-grid">
+                <div class="doc-card">
+                    <div class="icon">📊</div>
+                    <h2>PROJECT-STATUS.md</h2>
+                    <p>프로젝트 상태, 구현 완료 체크리스트, 개발 기록, 다음 세션 시작 방법</p>
+                    <a href="#" onclick="alert('텍스트 에디터로 열어주세요:\nPROJECT-STATUS.md')" class="btn">📄 파일 위치 확인</a>
+                </div>
+
+                <div class="doc-card">
+                    <div class="icon">📋</div>
+                    <h2>PROJECT-PLAN.md</h2>
+                    <p>전체 계획서, 질문사항 및 답변, 시스템 아키텍처, API 설계</p>
+                    <a href="#" onclick="alert('텍스트 에디터로 열어주세요:\nPROJECT-PLAN.md')" class="btn">📄 파일 위치 확인</a>
+                </div>
+
+                <div class="doc-card">
+                    <div class="icon">🚀</div>
+                    <h2>DEPLOYMENT.md</h2>
+                    <p>배포 가이드 (텍스트 버전), 서버 관리, 업데이트 방법</p>
+                    <a href="#" onclick="alert('텍스트 에디터로 열어주세요:\nDEPLOYMENT.md')" class="btn">📄 파일 위치 확인</a>
+                </div>
+
+                <div class="doc-card">
+                    <div class="icon">📄</div>
+                    <h2>README.md</h2>
+                    <p>빠른 시작 가이드, 프로젝트 개요, 접속 URL</p>
+                    <a href="#" onclick="alert('텍스트 에디터로 열어주세요:\nREADME.md')" class="btn">📄 파일 위치 확인</a>
+                </div>
+
+                <div class="doc-card">
+                    <div class="icon">📝</div>
+                    <h2>PROJECT-SUMMARY.md</h2>
+                    <p>프로젝트 완료 요약, 파일 구조, 성능 예측</p>
+                    <a href="#" onclick="alert('텍스트 에디터로 열어주세요:\nPROJECT-SUMMARY.md')" class="btn">📄 파일 위치 확인</a>
+                </div>
+
+                <div class="doc-card">
+                    <div class="icon">🍓</div>
+                    <h2>raspberry/README.md</h2>
+                    <p>라즈베리파이 설정 가이드 (텍스트 버전)</p>
+                    <a href="#" onclick="alert('텍스트 에디터로 열어주세요:\nraspberry/README.md')" class="btn">📄 파일 위치 확인</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- 빠른 링크 -->
+        <div class="quick-links">
+            <h3>🔗 빠른 링크</h3>
+            <div class="links-grid">
+                <a href="http://3.35.139.224:4000/" target="_blank" class="quick-link">🌐 웹 대시보드</a>
+                <a href="#" onclick="alert('EC2 IP: 3.35.139.224\nSSH: ssh -i ~/.ssh/uttec-first-ec2.pem ec2-user@3.35.139.224')" class="quick-link">🖥️ EC2 서버</a>
+                <a href="http://3.35.139.224:4000/api/health" target="_blank" class="quick-link">💚 서버 상태</a>
+                <a href="http://3.35.139.224:4000/api/weather/latest" target="_blank" class="quick-link">📊 최신 데이터</a>
+            </div>
+        </div>
+
+        <!-- 프로젝트 정보 -->
+        <div class="info-box">
+            <h3>📁 프로젝트 파일 위치</h3>
+            <ul>
+                <li><strong>로컬 Mac:</strong> /Users/maeg/todo/raspberry-weather-monitor/</li>
+                <li><strong>EC2 서버:</strong> /home/ec2-user/weather-server/</li>
+                <li><strong>라즈베리파이:</strong> /home/pi/weather-monitor/raspberry/</li>
+            </ul>
+        </div>
+
+        <div class="info-box">
+            <h3>🎯 빠른 시작</h3>
+            <ul>
+                <li><strong>1단계:</strong> "프로젝트 완료 보고서" 읽기 → 전체 개요 파악</li>
+                <li><strong>2단계:</strong> "배포 가이드" 읽기 → AWS 설정 및 서버 관리</li>
+                <li><strong>3단계:</strong> "라즈베리파이 설정 가이드" 읽기 → 센서 연결 및 데이터 수집</li>
+                <li><strong>4단계:</strong> 웹 대시보드에서 데이터 확인!</li>
+            </ul>
+        </div>
+
+        <div class="info-box">
+            <h3>✅ 완료된 작업</h3>
+            <ul>
+                <li>EC2 서버 배포 완료 (MariaDB, Node.js, PM2)</li>
+                <li>RESTful API 구현 완료 (데이터 수신/조회/통계)</li>
+                <li>웹 대시보드 개발 완료 (Chart.js 차트)</li>
+                <li>라즈베리파이 코드 작성 완료 (센서 읽기, 데이터 전송)</li>
+                <li>완전한 문서화 완료 (Markdown + HTML)</li>
+            </ul>
+        </div>
+
+        <div class="info-box">
+            <h3>⚠️ 남은 작업 (수동)</h3>
+            <ul>
+                <li><strong>AWS Security Group에서 포트 4000 열기</strong> (필수!)</li>
+                <li>웹 브라우저에서 http://3.35.139.224:4000/ 접속 확인</li>
+                <li>라즈베리파이에 코드 업로드</li>
+                <li>I2C 활성화 및 AHT20 센서 연결</li>
+                <li>Python 환경 설정</li>
+                <li>Cron 작업 등록하여 자동 수집 시작</li>
+            </ul>
+        </div>
+
+        <div class="info-box">
+            <h3>🔧 기술 스택</h3>
+            <ul>
+                <li><strong>센서:</strong> AHT20 (I2C, 온도/습도)</li>
+                <li><strong>라즈베리파이:</strong> Python 3, adafruit-circuitpython-aht20</li>
+                <li><strong>서버:</strong> AWS EC2 (Amazon Linux 2023)</li>
+                <li><strong>백엔드:</strong> Node.js v20.19.5, Express.js, MariaDB 10.5</li>
+                <li><strong>프론트엔드:</strong> HTML5, CSS3, JavaScript, Chart.js 4.4</li>
+                <li><strong>프로세스 관리:</strong> PM2</li>
+            </ul>
+        </div>
+
+        <footer>
+            <p><strong>🌡️ 라즈베리파이 온습도 모니터링 시스템</strong></p>
+            <p>프로젝트 문서 모음</p>
+            <p style="margin-top: 15px;">완료 날짜: 2025년 11월 14일</p>
+            <p>© 2025 Weather Monitoring Project. All rights reserved.</p>
+            <p style="margin-top: 15px; font-size: 0.9em; opacity: 0.9;">
+                이 페이지를 북마크하여 언제든지 프로젝트 문서에 쉽게 접근하세요!
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // 페이지 로드 시 환영 메시지
+        window.addEventListener('load', function() {
+            console.log('🎉 라즈베리파이 온습도 모니터링 시스템 문서 페이지');
+            console.log('📚 모든 프로젝트 문서를 한 곳에서 확인하세요!');
+        });
+    </script>
+</body>
+</html>

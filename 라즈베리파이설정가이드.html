@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>라즈베리파이 설정 가이드 - AHT20 센서</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #c471f5 0%, #fa71cd 100%);
+            color: white;
+            padding: 50px 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        header .subtitle {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+
+        header .raspberry-icon {
+            font-size: 4em;
+            margin: 20px 0;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        h2 {
+            color: #c471f5;
+            font-size: 1.9em;
+            margin: 35px 0 20px 0;
+            padding-bottom: 12px;
+            border-bottom: 3px solid #c471f5;
+        }
+
+        h3 {
+            color: #fa71cd;
+            font-size: 1.5em;
+            margin: 25px 0 15px 0;
+        }
+
+        h4 {
+            color: #666;
+            font-size: 1.2em;
+            margin: 20px 0 10px 0;
+        }
+
+        .requirements {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 5px solid #ff6b6b;
+        }
+
+        .requirements h3 {
+            color: #ff6b6b;
+            margin-top: 0;
+        }
+
+        .requirements ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .requirements li {
+            padding: 10px 0;
+            padding-left: 35px;
+            position: relative;
+            font-size: 1.1em;
+        }
+
+        .requirements li::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #ff6b6b;
+            font-weight: bold;
+            font-size: 1.3em;
+        }
+
+        .step-box {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 25px 0;
+            border-left: 5px solid #c471f5;
+        }
+
+        .step-number {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #c471f5 0%, #fa71cd 100%);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-right: 15px;
+        }
+
+        .step-title {
+            font-size: 1.4em;
+            color: #c471f5;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.8;
+        }
+
+        .code-block .comment {
+            color: #75715e;
+        }
+
+        .code-block .string {
+            color: #e6db74;
+        }
+
+        .output-block {
+            background: #000;
+            color: #0f0;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .success-msg {
+            color: #0f0;
+        }
+
+        .error-msg {
+            color: #f00;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+
+        .warning-box h4 {
+            color: #856404;
+            margin-top: 0;
+        }
+
+        .info-box {
+            background: #d1ecf1;
+            border-left: 5px solid #17a2b8;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+
+        .info-box h4 {
+            color: #0c5460;
+            margin-top: 0;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border-left: 5px solid #28a745;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+        }
+
+        .success-box h4 {
+            color: #155724;
+            margin-top: 0;
+        }
+
+        .wiring-diagram {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .wiring-table {
+            display: inline-block;
+            text-align: left;
+            margin: 20px auto;
+        }
+
+        .wiring-table table {
+            border-collapse: collapse;
+            width: 100%;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .wiring-table th {
+            background: linear-gradient(135deg, #c471f5 0%, #fa71cd 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+
+        .wiring-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+            background: white;
+        }
+
+        .wiring-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .pin-vcc {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .pin-gnd {
+            color: #000;
+            font-weight: bold;
+        }
+
+        .pin-sda {
+            color: #0066cc;
+            font-weight: bold;
+        }
+
+        .pin-scl {
+            color: #ff9900;
+            font-weight: bold;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th {
+            background: linear-gradient(135deg, #c471f5 0%, #fa71cd 100%);
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }
+
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .file-list {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+        }
+
+        .file-list ul {
+            list-style: none;
+            padding-left: 20px;
+        }
+
+        .file-list li {
+            padding: 5px 0;
+        }
+
+        .file-icon {
+            margin-right: 10px;
+        }
+
+        .troubleshooting {
+            background: #fff5f5;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 5px solid #dc3545;
+        }
+
+        .troubleshooting h4 {
+            color: #721c24;
+            margin-top: 0;
+        }
+
+        footer {
+            background: #2d2d2d;
+            color: white;
+            padding: 30px;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="raspberry-icon">🍓</div>
+            <h1>라즈베리파이 설정 가이드</h1>
+            <p class="subtitle">AHT20 온습도 센서로 데이터 수집하기</p>
+        </header>
+
+        <div class="content">
+            <!-- 필수 요구사항 -->
+            <div class="requirements">
+                <h3>📋 필수 요구사항</h3>
+                <ul>
+                    <li>라즈베리파이 (모든 모델 지원)</li>
+                    <li>AHT20 온습도 센서 (I2C)</li>
+                    <li>Python 3.7 이상</li>
+                    <li>네트워크 연결 (Wi-Fi 또는 이더넷)</li>
+                    <li>EC2 서버가 실행 중이고 포트 4000이 열려있어야 함</li>
+                </ul>
+            </div>
+
+            <!-- AHT20 센서 정보 -->
+            <h2>🌡️ AHT20 센서 사양</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>항목</th>
+                        <th>사양</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>온도 범위</strong></td>
+                        <td>-40°C ~ +80°C</td>
+                    </tr>
+                    <tr>
+                        <td><strong>습도 범위</strong></td>
+                        <td>0% ~ 100% RH</td>
+                    </tr>
+                    <tr>
+                        <td><strong>온도 정확도</strong></td>
+                        <td>±0.3°C</td>
+                    </tr>
+                    <tr>
+                        <td><strong>습도 정확도</strong></td>
+                        <td>±2% RH</td>
+                    </tr>
+                    <tr>
+                        <td><strong>통신 방식</strong></td>
+                        <td>I2C (주소 0x38)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>전원</strong></td>
+                        <td>3.3V</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- 센서 연결 -->
+            <h2>🔌 센서 연결 (하드웨어)</h2>
+
+            <div class="wiring-diagram">
+                <h3 style="color: #c471f5;">AHT20 ↔ 라즈베리파이 연결</h3>
+                <div class="wiring-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>AHT20 핀</th>
+                                <th>라즈베리파이 핀</th>
+                                <th>설명</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="pin-vcc">VCC</td>
+                                <td class="pin-vcc">3.3V (Pin 1)</td>
+                                <td>전원 공급</td>
+                            </tr>
+                            <tr>
+                                <td class="pin-gnd">GND</td>
+                                <td class="pin-gnd">GND (Pin 6)</td>
+                                <td>접지</td>
+                            </tr>
+                            <tr>
+                                <td class="pin-sda">SDA</td>
+                                <td class="pin-sda">GPIO 2 (Pin 3)</td>
+                                <td>I2C 데이터</td>
+                            </tr>
+                            <tr>
+                                <td class="pin-scl">SCL</td>
+                                <td class="pin-scl">GPIO 3 (Pin 5)</td>
+                                <td>I2C 클럭</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="warning-box">
+                <h4>⚠️ 주의사항</h4>
+                <ul style="margin-left: 20px; line-height: 2;">
+                    <li><strong>5V 사용 금지!</strong> AHT20은 3.3V 전용입니다. 5V를 연결하면 센서가 손상될 수 있습니다.</li>
+                    <li>연결 전 라즈베리파이의 전원을 꺼주세요.</li>
+                    <li>핀 번호를 정확히 확인하세요.</li>
+                </ul>
+            </div>
+
+            <!-- 설치 단계 -->
+            <h2>🔧 설치 및 설정</h2>
+
+            <!-- Step 1 -->
+            <div class="step-box">
+                <div class="step-title">
+                    <span class="step-number">1</span>
+                    <span>I2C 활성화</span>
+                </div>
+
+                <p>라즈베리파이에서 I2C 인터페이스를 활성화해야 합니다.</p>
+
+                <h4>설정 도구 실행</h4>
+                <div class="code-block">sudo raspi-config</div>
+
+                <h4>메뉴 선택</h4>
+                <ol style="margin-left: 20px; line-height: 2;">
+                    <li><strong>Interface Options</strong> 선택</li>
+                    <li><strong>I2C</strong> 선택</li>
+                    <li><strong>Yes</strong> 선택하여 활성화</li>
+                    <li><strong>Finish</strong>로 나가기</li>
+                </ol>
+
+                <h4>재부팅</h4>
+                <div class="code-block">sudo reboot</div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="step-box">
+                <div class="step-title">
+                    <span class="step-number">2</span>
+                    <span>I2C 연결 확인</span>
+                </div>
+
+                <p>센서가 정상적으로 연결되었는지 확인합니다.</p>
+
+                <div class="code-block">
+<span class="comment"># I2C 도구 설치 (필요시)</span>
+sudo apt-get install -y i2c-tools
+
+<span class="comment"># I2C 장치 확인</span>
+sudo i2cdetect -y 1
+                </div>
+
+                <h4>예상 출력:</h4>
+                <div class="output-block">
+     0  1  2  3  4  5  6  7  8  9  a  b  c  d  e  f
+00:          -- -- -- -- -- -- -- -- -- -- -- -- --
+10: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+20: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+30: -- -- -- -- -- -- -- -- <span class="success-msg">38</span> -- -- -- -- -- -- --
+40: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+50: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+60: -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
+70: -- -- -- -- -- -- -- --
+                </div>
+
+                <div class="success-box">
+                    <h4>✅ 성공!</h4>
+                    <p><strong>0x38</strong> 주소에서 AHT20 센서가 감지되었습니다.</p>
+                </div>
+
+                <div class="troubleshooting">
+                    <h4>❌ 센서가 안 보이는 경우</h4>
+                    <ol style="margin-left: 20px; line-height: 2;">
+                        <li>센서 연결 상태 확인 (VCC, GND, SDA, SCL)</li>
+                        <li>3.3V로 연결했는지 확인</li>
+                        <li>I2C가 활성화되어 있는지 확인</li>
+                        <li>재부팅 후 다시 시도</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="step-box">
+                <div class="step-title">
+                    <span class="step-number">3</span>
+                    <span>프로젝트 파일 전송</span>
+                </div>
+
+                <p>Mac에서 라즈베리파이로 코드를 전송합니다.</p>
+
+                <div class="warning-box">
+                    <h4>⚠️ 준비사항</h4>
+                    <p>라즈베리파이의 IP 주소를 확인하세요!</p>
+                    <div class="code-block">
+<span class="comment"># 라즈베리파이에서 IP 확인</span>
+hostname -I
+                    </div>
+                </div>
+
+                <h4>Mac 터미널에서 실행:</h4>
+                <div class="code-block">
+<span class="comment"># 프로젝트 폴더로 이동</span>
+cd /Users/maeg/todo/raspberry-weather-monitor
+
+<span class="comment"># 파일 전송 (라즈베리파이 IP를 실제 IP로 변경)</span>
+scp -r raspberry/ pi@<라즈베리파이IP>:/home/pi/weather-monitor/
+                </div>
+
+                <div class="info-box">
+                    <h4>💡 예시</h4>
+                    <p>라즈베리파이 IP가 192.168.0.100인 경우:</p>
+                    <div class="code-block">
+scp -r raspberry/ pi@192.168.0.100:/home/pi/weather-monitor/
+                    </div>
+                </div>
+            </div>
+
+            <!-- Step 4 -->
+            <div class="step-box">
+                <div class="step-title">
+                    <span class="step-number">4</span>
+                    <span>SSH 접속</span>
+                </div>
+
+                <div class="code-block">
+ssh pi@<라즈베리파이IP>
+                </div>
+
+                <p style="margin-top: 15px;">기본 비밀번호는 <code style="background: #f4f4f4; padding: 2px 8px; border-radius: 4px;">raspberry</code>입니다. (변경했다면 변경한 비밀번호 사용)</p>
+            </div>
+
+            <!-- Step 5 -->
+            <div class="step-box">
+                <div class="step-title">
+                    <span class="step-number">5</span>
+                    <span>Python 환경 설정</span>
+                </div>
+
+                <h4>프로젝트 폴더로 이동</h4>
+                <div class="code-block">cd /home/pi/weather-monitor/raspberry</div>
+
+                <h4>파일 확인</h4>
+                <div class="code-block">ls -la</div>
+
+                <div class="file-list">
+                    <ul>
+                        <li><span class="file-icon">🐍</span>sensor_reader.py</li>
+                        <li><span class="file-icon">🐍</span>data_sender.py</li>
+                        <li><span class="file-icon">⚙️</span>config.json</li>
+                        <li><span class="file-icon">📦</span>requirements.txt</li>
+                        <li><span class="file-icon">🔧</span>install.sh</li>
+                        <li><span class="file-icon">📄</span>README.md</li>
+                    </ul>
+                </div>
+
+                <h4>설치 스크립트 실행</h4>
+                <div class="code-block">
+<span class="comment"># 실행 권한 부여</span>
+chmod +x install.sh
+
+<span class="comment"># 설치 시작</span>
+./install.sh
+                </div>
+
+                <div class="info-box">
+                    <h4>📦 설치되는 패키지</h4>
+                    <ul style="margin-left: 20px; line-height: 2;">
+                        <li>adafruit-circuitpython-aht20 (센서 라이브러리)</li>
+                        <li>requests (HTTP 통신)</li>
+                        <li>python-dotenv (설정 관리)</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Step 6 -->
+            <div class="step-box">
+                <div class="step-title">
+                    <span class="step-number">6</span>
+                    <span>센서 테스트</span>
+                </div>
+
+                <p>센서가 정상적으로 작동하는지 확인합니다.</p>
+
+                <div class="code-block">python3 sensor_reader.py</div>
+
+                <h4>예상 출력:</h4>
+                <div class="output-block">
+<span class="success-msg">✅ AHT20 센서 초기화 성공</span>
+
+[1/10] 측정 중...
+<span class="success-msg">🌡️  온도: 23.5°C</span>
+<span class="success-msg">💧 습도: 65.2%</span>
+
+[2/10] 측정 중...
+<span class="success-msg">🌡️  온도: 23.6°C</span>
+<span class="success-msg">💧 습도: 64.8%</span>
+
+...
+
+<span class="success-msg">✅ 테스트 완료!</span>
+                </div>
+
+                <div class="success-box">
+                    <h4>✅ 센서 정상 작동!</h4>
+                    <p>온도와 습도 값이 표시되면 센서가 정상입니다.</p>
+                </div>
+            </div>
+
+            <!-- Step 7 -->
+            <div class="step-box">
+                <div class="step-title">
+                    <span class="step-number">7</span>
+                    <span>데이터 전송 테스트</span>
+                </div>
+
+                <p>EC2 서버로 데이터를 전송해봅니다.</p>
+
+                <div class="warning-box">
+                    <h4>⚠️ 사전 확인</h4>
+                    <ul style="margin-left: 20px; line-height: 2;">
+                        <li>EC2 서버가 실행 중인지 확인</li>
+                        <li>AWS Security Group에서 포트 4000이 열려있는지 확인</li>
+                        <li>config.json의 API URL이 올바른지 확인</li>
+                    </ul>
+                </div>
+
+                <h4>한 번만 전송 (테스트)</h4>
+                <div class="code-block">python3 data_sender.py --once</div>
+
+                <h4>예상 출력:</h4>
+                <div class="output-block">
+============================================================
+🔄 데이터 수집 시작: 2025-11-14 14:30:00
+============================================================
+📊 측정값:
+   🌡️  온도: 23.5°C
+   💧 습도: 65.2%
+
+📤 서버로 데이터 전송 중... (시도 1/3)
+<span class="success-msg">✅ 전송 성공! 데이터 ID: 1</span>
+   온도: 23.5°C, 습도: 65.2%
+============================================================
+                </div>
+
+                <div class="success-box">
+                    <h4>✅ 전송 성공!</h4>
+                    <p>EC2 서버에 데이터가 저장되었습니다. 웹 대시보드에서 확인할 수 있습니다.</p>
+                </div>
+
+                <div class="troubleshooting">
+                    <h4>❌ 전송 실패 시</h4>
+                    <ol style="margin-left: 20px; line-height: 2;">
+                        <li><strong>네트워크 확인:</strong> <code>ping 3.35.139.224</code></li>
+                        <li><strong>포트 확인:</strong> AWS Security Group에서 포트 4000 오픈</li>
+                        <li><strong>API Key 확인:</strong> config.json의 API Key가 서버와 일치하는지</li>
+                        <li><strong>URL 확인:</strong> config.json의 api_url이 올바른지</li>
+                    </ol>
+                </div>
+            </div>
+
+            <!-- Step 8 -->
+            <div class="step-box">
+                <div class="step-title">
+                    <span class="step-number">8</span>
+                    <span>Cron 자동 실행 설정 (5분마다)</span>
+                </div>
+
+                <p>데이터를 자동으로 수집하고 전송하도록 설정합니다.</p>
+
+                <h4>Cron 편집기 열기</h4>
+                <div class="code-block">crontab -e</div>
+
+                <div class="info-box">
+                    <h4>💡 처음 실행 시</h4>
+                    <p>편집기를 선택하라는 메시지가 나오면 <strong>nano</strong> (보통 1번)를 선택하세요.</p>
+                </div>
+
+                <h4>파일 끝에 다음 줄 추가</h4>
+                <div class="code-block">
+*/5 * * * * cd /home/pi/weather-monitor/raspberry && /usr/bin/python3 data_sender.py --once >> /tmp/weather.log 2>&1
+                </div>
+
+                <div class="info-box">
+                    <h4>📝 의미 설명</h4>
+                    <table style="margin-top: 15px;">
+                        <tr>
+                            <th>부분</th>
+                            <th>의미</th>
+                        </tr>
+                        <tr>
+                            <td><code>*/5 * * * *</code></td>
+                            <td>5분마다 실행</td>
+                        </tr>
+                        <tr>
+                            <td><code>cd /home/pi/weather-monitor/raspberry</code></td>
+                            <td>프로젝트 폴더로 이동</td>
+                        </tr>
+                        <tr>
+                            <td><code>python3 data_sender.py --once</code></td>
+                            <td>데이터 한 번 전송</td>
+                        </tr>
+                        <tr>
+                            <td><code>>> /tmp/weather.log 2>&1</code></td>
+                            <td>로그 파일에 출력 저장</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <h4>저장 및 종료</h4>
+                <p>nano 편집기에서: <code>Ctrl + X</code> → <code>Y</code> → <code>Enter</code></p>
+
+                <h4>Cron 작업 확인</h4>
+                <div class="code-block">crontab -l</div>
+            </div>
+
+            <!-- Step 9 -->
+            <div class="step-box">
+                <div class="step-title">
+                    <span class="step-number">9</span>
+                    <span>로그 확인</span>
+                </div>
+
+                <p>자동 실행이 잘 되고 있는지 로그로 확인합니다.</p>
+
+                <h4>실시간 로그 보기</h4>
+                <div class="code-block">tail -f /tmp/weather.log</div>
+
+                <h4>최근 50줄 보기</h4>
+                <div class="code-block">tail -50 /tmp/weather.log</div>
+
+                <h4>로그 파일 비우기</h4>
+                <div class="code-block">
+<span class="comment"># 너무 커진 경우</span>
+> /tmp/weather.log
+                </div>
+            </div>
+
+            <!-- 설정 파일 -->
+            <h2>⚙️ 설정 파일 (config.json)</h2>
+
+            <div class="code-block">
+{
+  <span class="string">"api_url"</span>: <span class="string">"http://3.35.139.224:4000/api/weather/data"</span>,
+  <span class="string">"api_key"</span>: <span class="string">"raspberry-weather-key-2025-secure"</span>,
+  <span class="string">"sensor_id"</span>: <span class="string">"raspberry-pi-001"</span>,
+  <span class="string">"interval_minutes"</span>: 5,
+  <span class="string">"retry_attempts"</span>: 3,
+  <span class="string">"retry_delay_seconds"</span>: 10
+}
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>항목</th>
+                        <th>설명</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>api_url</strong></td>
+                        <td>EC2 서버 API 주소</td>
+                    </tr>
+                    <tr>
+                        <td><strong>api_key</strong></td>
+                        <td>인증 키 (서버의 .env와 일치해야 함)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>sensor_id</strong></td>
+                        <td>센서 식별자 (여러 라즈베리파이 사용 시 변경)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>interval_minutes</strong></td>
+                        <td>데이터 수집 주기 (분)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>retry_attempts</strong></td>
+                        <td>전송 실패 시 재시도 횟수</td>
+                    </tr>
+                    <tr>
+                        <td><strong>retry_delay_seconds</strong></td>
+                        <td>재시도 대기 시간 (초)</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- 명령어 요약 -->
+            <h2>📝 자주 사용하는 명령어</h2>
+
+            <h3>센서 테스트</h3>
+            <div class="code-block">
+<span class="comment"># 센서 읽기 테스트</span>
+python3 sensor_reader.py
+
+<span class="comment"># 한 번만 전송</span>
+python3 data_sender.py --once
+
+<span class="comment"># 연속 모드 (Ctrl+C로 중지)</span>
+python3 data_sender.py
+            </div>
+
+            <h3>Cron 관리</h3>
+            <div class="code-block">
+<span class="comment"># Cron 작업 편집</span>
+crontab -e
+
+<span class="comment"># Cron 작업 목록 보기</span>
+crontab -l
+
+<span class="comment"># Cron 작업 모두 삭제 (주의!)</span>
+crontab -r
+            </div>
+
+            <h3>로그 확인</h3>
+            <div class="code-block">
+<span class="comment"># 실시간 로그</span>
+tail -f /tmp/weather.log
+
+<span class="comment"># 최근 100줄</span>
+tail -100 /tmp/weather.log
+
+<span class="comment"># 로그 검색 (에러만)</span>
+grep -i error /tmp/weather.log
+            </div>
+
+            <!-- 문제 해결 -->
+            <h2>🐛 문제 해결</h2>
+
+            <div class="troubleshooting">
+                <h4>❌ "No module named 'adafruit_aht20'"</h4>
+                <p><strong>원인:</strong> Python 패키지가 설치되지 않음</p>
+                <p><strong>해결:</strong></p>
+                <div class="code-block">
+pip3 install adafruit-circuitpython-aht20
+<span class="comment"># 또는 전체 재설치</span>
+./install.sh
+                </div>
+            </div>
+
+            <div class="troubleshooting">
+                <h4>❌ "Connection refused"</h4>
+                <p><strong>원인:</strong> EC2 서버에 연결할 수 없음</p>
+                <p><strong>해결:</strong></p>
+                <ol style="margin-left: 20px; line-height: 2;">
+                    <li>네트워크 연결 확인: <code>ping 3.35.139.224</code></li>
+                    <li>EC2 서버가 실행 중인지 확인</li>
+                    <li>AWS Security Group에서 포트 4000 오픈 확인</li>
+                </ol>
+            </div>
+
+            <div class="troubleshooting">
+                <h4>❌ "API Key가 유효하지 않습니다"</h4>
+                <p><strong>원인:</strong> API Key가 서버와 일치하지 않음</p>
+                <p><strong>해결:</strong></p>
+                <div class="code-block">
+<span class="comment"># config.json 편집</span>
+nano config.json
+
+<span class="comment"># API Key를 서버의 .env 파일과 일치하도록 수정</span>
+<span class="comment"># 서버: raspberry-weather-key-2025-secure</span>
+                </div>
+            </div>
+
+            <div class="troubleshooting">
+                <h4>❌ 센서 값이 이상함 (999, -999 등)</h4>
+                <p><strong>원인:</strong> 센서 연결 불량 또는 초기화 실패</p>
+                <p><strong>해결:</strong></p>
+                <ol style="margin-left: 20px; line-height: 2;">
+                    <li>센서 연결 다시 확인</li>
+                    <li>라즈베리파이 재부팅: <code>sudo reboot</code></li>
+                    <li>I2C 주소 확인: <code>sudo i2cdetect -y 1</code></li>
+                </ol>
+            </div>
+
+            <!-- 최종 체크리스트 -->
+            <h2>✅ 최종 체크리스트</h2>
+
+            <div class="step-box">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>항목</th>
+                            <th>확인</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>I2C 활성화</td>
+                            <td>☐</td>
+                        </tr>
+                        <tr>
+                            <td>센서 연결 (3.3V, GND, SDA, SCL)</td>
+                            <td>☐</td>
+                        </tr>
+                        <tr>
+                            <td>I2C 장치 확인 (0x38)</td>
+                            <td>☐</td>
+                        </tr>
+                        <tr>
+                            <td>Python 패키지 설치</td>
+                            <td>☐</td>
+                        </tr>
+                        <tr>
+                            <td>센서 읽기 테스트 성공</td>
+                            <td>☐</td>
+                        </tr>
+                        <tr>
+                            <td>데이터 전송 테스트 성공</td>
+                            <td>☐</td>
+                        </tr>
+                        <tr>
+                            <td>Cron 작업 등록</td>
+                            <td>☐</td>
+                        </tr>
+                        <tr>
+                            <td>로그 확인 (정상 작동)</td>
+                            <td>☐</td>
+                        </tr>
+                        <tr>
+                            <td>웹 대시보드에서 데이터 확인</td>
+                            <td>☐</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- 참고 -->
+            <div class="success-box">
+                <h3 style="margin-top: 0;">🎉 설정 완료!</h3>
+                <p style="font-size: 1.1em; line-height: 2;">
+                    이제 라즈베리파이가 5분마다 자동으로 온도와 습도를 측정하여<br>
+                    EC2 서버로 전송합니다. 웹 대시보드에서 실시간 데이터를 확인하세요!
+                </p>
+                <p style="margin-top: 15px;">
+                    <strong>웹 대시보드:</strong> http://3.35.139.224:4000/
+                </p>
+            </div>
+
+            <div class="info-box">
+                <h4>📚 추가 도움말</h4>
+                <p>더 자세한 정보는 다음 문서를 참조하세요:</p>
+                <ul style="margin-left: 20px; line-height: 2;">
+                    <li><strong>프로젝트완료보고서.html</strong> - 전체 프로젝트 개요</li>
+                    <li><strong>배포가이드.html</strong> - EC2 서버 관리</li>
+                    <li><strong>DEPLOYMENT.md</strong> - 텍스트 기반 배포 가이드</li>
+                </ul>
+            </div>
+        </div>
+
+        <footer>
+            <p><strong>🍓 라즈베리파이 설정 가이드</strong></p>
+            <p>AHT20 온습도 센서</p>
+            <p>© 2025 Weather Monitoring Project</p>
+        </footer>
+    </div>
+</body>
+</html>

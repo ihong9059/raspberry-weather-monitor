@@ -1,0 +1,9 @@
+# AHT20 센서 라이브러리
+adafruit-circuitpython-aht20==1.0.16
+adafruit-blinka==8.32.2
+
+# HTTP 통신
+requests==2.31.0
+
+# 기타 유틸리티
+python-dotenv==1.0.0

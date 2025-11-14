@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>라즈베리파이 온습도 모니터링 시스템 - 완료 보고서</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 60px 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        header .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        header .date {
+            margin-top: 20px;
+            font-size: 1em;
+            opacity: 0.8;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        h2 {
+            color: #667eea;
+            font-size: 1.8em;
+            margin: 30px 0 20px 0;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        h3 {
+            color: #764ba2;
+            font-size: 1.4em;
+            margin: 25px 0 15px 0;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin: 10px 0;
+        }
+
+        .status-complete {
+            background: #28a745;
+            color: white;
+        }
+
+        .status-pending {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .status-warning {
+            background: #dc3545;
+            color: white;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .info-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+        }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .info-card h4 {
+            color: #667eea;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+        }
+
+        .info-card p {
+            color: #555;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+
+        .architecture-diagram {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 5px solid #667eea;
+        }
+
+        .architecture-diagram pre {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.8;
+            overflow-x: auto;
+        }
+
+        .checklist {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+
+        .checklist-item {
+            padding: 12px;
+            margin: 8px 0;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #28a745;
+            display: flex;
+            align-items: center;
+        }
+
+        .checklist-item.pending {
+            border-left-color: #ffc107;
+        }
+
+        .checklist-item.warning {
+            border-left-color: #dc3545;
+            background: #fff5f5;
+        }
+
+        .checklist-item::before {
+            content: "✓";
+            font-size: 1.5em;
+            color: #28a745;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+
+        .checklist-item.pending::before {
+            content: "○";
+            color: #ffc107;
+        }
+
+        .checklist-item.warning::before {
+            content: "!";
+            color: #dc3545;
+        }
+
+        .tech-stack {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .tech-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .tech-item .tech-name {
+            font-size: 1.2em;
+            margin-bottom: 5px;
+        }
+
+        .tech-item .tech-version {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background: #f8f9fa;
+        }
+
+        .code-block {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.6;
+        }
+
+        .code-block .comment {
+            color: #75715e;
+        }
+
+        .code-block .string {
+            color: #e6db74;
+        }
+
+        .code-block .number {
+            color: #ae81ff;
+        }
+
+        .url-box {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .url-box a {
+            color: #fff;
+            font-size: 1.5em;
+            font-weight: bold;
+            text-decoration: none;
+            display: block;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+
+        .url-box a:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.02);
+        }
+
+        .file-tree {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.8;
+        }
+
+        .alert {
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            border-color: #ffc107;
+            color: #856404;
+        }
+
+        .alert-danger {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            border-color: #17a2b8;
+            color: #0c5460;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+            margin: 30px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding: 20px;
+            margin-bottom: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -37px;
+            top: 20px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #667eea;
+            border: 4px solid white;
+        }
+
+        .next-steps {
+            background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+
+        .next-steps h3 {
+            color: white;
+            margin-top: 0;
+        }
+
+        .next-steps ol {
+            font-size: 1.1em;
+            line-height: 2;
+            padding-left: 30px;
+        }
+
+        footer {
+            background: #2d2d2d;
+            color: white;
+            padding: 30px;
+            text-align: center;
+            margin-top: 40px;
+        }
+
+        footer p {
+            margin: 5px 0;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+
+            .container {
+                box-shadow: none;
+            }
+
+            .next-steps, .url-box {
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌡️ 라즈베리파이 온습도 모니터링 시스템</h1>
+            <p class="subtitle">프로젝트 완료 보고서</p>
+            <div class="date">
+                <strong>완료 날짜:</strong> 2025년 11월 14일<br>
+                <strong>개발 시간:</strong> 약 3시간
+            </div>
+            <div style="margin-top: 20px;">
+                <span class="status-badge status-complete">✅ MVP 개발 완료</span>
+            </div>
+        </header>
+
+        <div class="content">
+            <!-- 프로젝트 개요 -->
+            <h2>📋 프로젝트 개요</h2>
+            <p style="font-size: 1.1em; line-height: 1.8; margin: 20px 0;">
+                라즈베리파이의 <strong>AHT20 센서</strong>로 온도/습도를 <strong>5분마다</strong> 측정하여
+                <strong>AWS EC2 서버</strong>로 전송하고, 웹 브라우저에서 <strong>Chart.js</strong>로
+                실시간 시각화하는 IoT 모니터링 시스템입니다.
+            </p>
+
+            <!-- 주요 정보 -->
+            <div class="info-grid">
+                <div class="info-card">
+                    <h4>📊 센서 모델</h4>
+                    <p>AHT20</p>
+                </div>
+                <div class="info-card">
+                    <h4>🌐 서버 IP</h4>
+                    <p>3.35.139.224</p>
+                </div>
+                <div class="info-card">
+                    <h4>🔌 포트 번호</h4>
+                    <p>4000</p>
+                </div>
+                <div class="info-card">
+                    <h4>💾 데이터베이스</h4>
+                    <p>MariaDB 10.5</p>
+                </div>
+                <div class="info-card">
+                    <h4>⏱️ 수집 주기</h4>
+                    <p>5분</p>
+                </div>
+                <div class="info-card">
+                    <h4>📈 데이터 저장</h4>
+                    <p>MySQL</p>
+                </div>
+            </div>
+
+            <!-- 시스템 아키텍처 -->
+            <h2>🏗️ 시스템 아키텍처</h2>
+            <div class="architecture-diagram">
+                <pre>
+┌─────────────────────────────────────┐
+│      <strong>라즈베리파이</strong>              │
+│  • AHT20 센서 (I2C)         │
+│  • Python 3                 │
+│  • 5분 주기 데이터 수집     │
+└───────────┬─────────────────┘
+            │
+            │ <strong style="color: #667eea;">HTTP POST (API Key 인증)</strong>
+            │ {"temperature": 23.5, "humidity": 65.2}
+            │
+            ▼
+┌─────────────────────────────────────┐
+│      <strong>AWS EC2 Server</strong>            │
+│  IP: 3.35.139.224:4000      │
+│                             │
+│  • Node.js v20.19.5         │
+│  • Express.js API           │
+│  • MariaDB 10.5.29          │
+│  • PM2 프로세스 관리        │
+└───────────┬─────────────────┘
+            │
+            │ <strong style="color: #764ba2;">HTTP GET (JSON)</strong>
+            │ [{temp, humidity, timestamp}, ...]
+            │
+            ▼
+┌─────────────────────────────────────┐
+│      <strong>웹 브라우저</strong>               │
+│  • Chart.js 차트            │
+│  • 실시간 대시보드          │
+│  • 통계 정보 표시           │
+└─────────────────────────────────────┘
+                </pre>
+            </div>
+
+            <!-- 접속 URL -->
+            <h2>🌐 접속 정보</h2>
+            <div class="url-box">
+                <h3 style="color: white; margin: 0;">웹 대시보드</h3>
+                <a href="http://3.35.139.224:4000/" target="_blank">
+                    http://3.35.139.224:4000/
+                </a>
+                <p style="margin-top: 15px; font-size: 0.9em; opacity: 0.9;">
+                    ⚠️ AWS Security Group에서 포트 4000 오픈 후 접속 가능
+                </p>
+            </div>
+
+            <!-- 완료된 작업 -->
+            <h2>✅ 완료된 작업</h2>
+
+            <h3>1. 프로젝트 문서화</h3>
+            <div class="checklist">
+                <div class="checklist-item">PROJECT-PLAN.md - 전체 계획 및 질문사항</div>
+                <div class="checklist-item">PROJECT-STATUS.md - 실시간 프로젝트 상태</div>
+                <div class="checklist-item">README.md - 빠른 시작 가이드</div>
+                <div class="checklist-item">DEPLOYMENT.md - 배포 및 운영 가이드</div>
+                <div class="checklist-item">raspberry/README.md - 라즈베리파이 설정</div>
+                <div class="checklist-item">프로젝트완료보고서.html - 시각화된 보고서</div>
+            </div>
+
+            <h3>2. EC2 서버 환경 구축</h3>
+            <div class="checklist">
+                <div class="checklist-item">MariaDB 10.5.29 설치</div>
+                <div class="checklist-item">weather_db 데이터베이스 생성</div>
+                <div class="checklist-item">weather_data 테이블 생성 (온도, 습도, 타임스탬프)</div>
+                <div class="checklist-item">MySQL 사용자 생성 (weather_user)</div>
+                <div class="checklist-item">인덱스 최적화 (timestamp 컬럼)</div>
+            </div>
+
+            <h3>3. 백엔드 API 개발 (Node.js + Express)</h3>
+            <div class="checklist">
+                <div class="checklist-item">POST /api/weather/data - 센서 데이터 수신</div>
+                <div class="checklist-item">GET /api/weather/data - 기간별 데이터 조회</div>
+                <div class="checklist-item">GET /api/weather/latest - 최신 데이터</div>
+                <div class="checklist-item">GET /api/weather/stats - 통계 정보</div>
+                <div class="checklist-item">GET /api/health - 서버 상태 확인</div>
+                <div class="checklist-item">API Key 인증 미들웨어 (X-API-Key)</div>
+                <div class="checklist-item">MySQL 연결 풀 설정</div>
+                <div class="checklist-item">에러 핸들링 및 로깅</div>
+            </div>
+
+            <h3>4. 라즈베리파이 코드 (Python)</h3>
+            <div class="checklist">
+                <div class="checklist-item">sensor_reader.py - AHT20 센서 읽기</div>
+                <div class="checklist-item">data_sender.py - EC2로 데이터 전송</div>
+                <div class="checklist-item">config.json - 설정 파일</div>
+                <div class="checklist-item">install.sh - 자동 설치 스크립트</div>
+                <div class="checklist-item">requirements.txt - Python 패키지 목록</div>
+                <div class="checklist-item">재시도 로직 (3회 시도)</div>
+                <div class="checklist-item">Cron 작업 가이드 작성</div>
+            </div>
+
+            <h3>5. 웹 클라이언트 (HTML/CSS/JavaScript)</h3>
+            <div class="checklist">
+                <div class="checklist-item">반응형 대시보드 레이아웃</div>
+                <div class="checklist-item">Chart.js 온도 차트 (빨간색 라인 차트)</div>
+                <div class="checklist-item">Chart.js 습도 차트 (청록색 라인 차트)</div>
+                <div class="checklist-item">현재 온도/습도 실시간 표시</div>
+                <div class="checklist-item">통계 정보 (평균, 최대, 최저)</div>
+                <div class="checklist-item">날짜 범위 선택 (24h, 48h, 1주, 사용자 정의)</div>
+                <div class="checklist-item">5분 자동 새로고침</div>
+                <div class="checklist-item">서버 상태 표시</div>
+            </div>
+
+            <h3>6. 배포 및 운영</h3>
+            <div class="checklist">
+                <div class="checklist-item">EC2에 서버 코드 업로드</div>
+                <div class="checklist-item">npm 패키지 설치</div>
+                <div class="checklist-item">PM2로 프로세스 관리 설정</div>
+                <div class="checklist-item">시스템 재부팅 시 자동 시작 등록</div>
+                <div class="checklist-item">서버 정상 실행 확인</div>
+            </div>
+
+            <!-- 기술 스택 -->
+            <h2>🔧 기술 스택</h2>
+            <div class="tech-stack">
+                <div class="tech-item">
+                    <div class="tech-name">🍓 라즈베리파이</div>
+                    <div class="tech-version">Python 3</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-name">🌡️ AHT20</div>
+                    <div class="tech-version">I2C 센서</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-name">🟢 Node.js</div>
+                    <div class="tech-version">v20.19.5</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-name">⚡ Express.js</div>
+                    <div class="tech-version">v4.18.2</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-name">🐬 MariaDB</div>
+                    <div class="tech-version">v10.5.29</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-name">📊 Chart.js</div>
+                    <div class="tech-version">v4.4.0</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-name">🔄 PM2</div>
+                    <div class="tech-version">프로세스 관리</div>
+                </div>
+                <div class="tech-item">
+                    <div class="tech-name">☁️ AWS EC2</div>
+                    <div class="tech-version">Amazon Linux 2023</div>
+                </div>
+            </div>
+
+            <!-- 데이터베이스 스키마 -->
+            <h2>🗄️ 데이터베이스 스키마</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>컬럼명</th>
+                        <th>타입</th>
+                        <th>설명</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>id</strong></td>
+                        <td>INT AUTO_INCREMENT</td>
+                        <td>기본 키 (Primary Key)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>temperature</strong></td>
+                        <td>DECIMAL(5,2)</td>
+                        <td>온도 (°C)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>humidity</strong></td>
+                        <td>DECIMAL(5,2)</td>
+                        <td>습도 (%)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>timestamp</strong></td>
+                        <td>DATETIME</td>
+                        <td>측정 시각 (UTC) - 인덱스 적용</td>
+                    </tr>
+                    <tr>
+                        <td><strong>sensor_id</strong></td>
+                        <td>VARCHAR(50)</td>
+                        <td>센서 식별자 (기본: raspberry-pi-001)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>created_at</strong></td>
+                        <td>TIMESTAMP</td>
+                        <td>레코드 생성 시각</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- API 엔드포인트 -->
+            <h2>🔌 API 엔드포인트</h2>
+
+            <h3>1. 데이터 수신 (라즈베리파이 → EC2)</h3>
+            <div class="code-block">
+<span class="comment"># POST 요청</span>
+curl -X POST http://3.35.139.224:4000/api/weather/data \
+  -H <span class="string">"Content-Type: application/json"</span> \
+  -H <span class="string">"X-API-Key: raspberry-weather-key-2025-secure"</span> \
+  -d <span class="string">'{
+    "temperature": 23.5,
+    "humidity": 65.2,
+    "timestamp": "2025-11-14T12:00:00Z",
+    "sensor_id": "raspberry-pi-001"
+  }'</span>
+
+<span class="comment"># 응답</span>
+{
+  <span class="string">"success"</span>: <span class="number">true</span>,
+  <span class="string">"message"</span>: <span class="string">"데이터가 성공적으로 저장되었습니다."</span>,
+  <span class="string">"data_id"</span>: <span class="number">1</span>
+}
+            </div>
+
+            <h3>2. 데이터 조회 (웹 → EC2)</h3>
+            <div class="code-block">
+<span class="comment"># GET 요청</span>
+curl http://3.35.139.224:4000/api/weather/data?start=2025-11-13T00:00:00Z&end=2025-11-14T00:00:00Z
+
+<span class="comment"># 응답</span>
+{
+  <span class="string">"success"</span>: <span class="number">true</span>,
+  <span class="string">"count"</span>: <span class="number">288</span>,
+  <span class="string">"data"</span>: [
+    {
+      <span class="string">"id"</span>: <span class="number">1</span>,
+      <span class="string">"temperature"</span>: <span class="number">23.5</span>,
+      <span class="string">"humidity"</span>: <span class="number">65.2</span>,
+      <span class="string">"timestamp"</span>: <span class="string">"2025-11-14T00:00:00Z"</span>
+    }
+  ]
+}
+            </div>
+
+            <h3>3. 최신 데이터</h3>
+            <div class="code-block">
+<span class="comment"># GET 요청</span>
+curl http://3.35.139.224:4000/api/weather/latest
+
+<span class="comment"># 응답</span>
+{
+  <span class="string">"success"</span>: <span class="number">true</span>,
+  <span class="string">"data"</span>: {
+    <span class="string">"temperature"</span>: <span class="number">24.1</span>,
+    <span class="string">"humidity"</span>: <span class="number">63.5</span>,
+    <span class="string">"timestamp"</span>: <span class="string">"2025-11-14T14:30:00Z"</span>
+  }
+}
+            </div>
+
+            <!-- 파일 구조 -->
+            <h2>📁 프로젝트 파일 구조</h2>
+            <div class="file-tree">
+raspberry-weather-monitor/
+├── 📄 프로젝트완료보고서.html     <strong style="color: #667eea;">← 이 문서</strong>
+├── 📄 PROJECT-SUMMARY.md          완료 요약
+├── 📄 PROJECT-PLAN.md             전체 계획서
+├── 📄 PROJECT-STATUS.md           상태 추적
+├── 📄 README.md                   빠른 시작
+├── 📄 DEPLOYMENT.md               배포 가이드
+│
+├── 📂 raspberry/                  라즈베리파이 코드
+│   ├── 🐍 sensor_reader.py        센서 읽기
+│   ├── 🐍 data_sender.py          데이터 전송
+│   ├── ⚙️  config.json             설정
+│   ├── 📦 requirements.txt        Python 패키지
+│   ├── 🔧 install.sh              설치 스크립트
+│   └── 📄 README.md               라즈베리파이 가이드
+│
+├── 📂 server/                     EC2 서버 코드
+│   ├── 🟢 app.js                  Express 서버
+│   ├── 📦 package.json
+│   ├── 🔒 .env                    환경변수
+│   ├── 📂 config/
+│   │   └── 💾 database.js         MySQL 연결
+│   └── 📂 routes/
+│       ├── 🔌 weather-api.js      API 라우트
+│       └── 🔐 auth.js             API Key 인증
+│
+└── 📂 public/                     웹 클라이언트
+    ├── 🌐 index.html              대시보드
+    ├── 📂 css/
+    │   └── 🎨 style.css
+    └── 📂 js/
+        ├── 📊 app.js              메인 로직
+        └── 📈 chart-config.js     Chart.js 설정
+            </div>
+
+            <!-- 남은 작업 -->
+            <h2>⚠️ 남은 작업 (수동)</h2>
+
+            <div class="alert alert-danger">
+                <h3 style="margin-top: 0;">🚨 중요: AWS Security Group 설정 필수!</h3>
+                <p><strong>현재 서버는 실행 중이지만, 외부에서 접속하려면 AWS Security Group에서 포트 4000을 열어야 합니다.</strong></p>
+            </div>
+
+            <h3>1. AWS Security Group 포트 4000 오픈</h3>
+            <div class="checklist">
+                <div class="checklist-item pending">AWS EC2 Console 접속</div>
+                <div class="checklist-item pending">인스턴스 선택 → Security 탭 클릭</div>
+                <div class="checklist-item pending">Security Groups 링크 클릭</div>
+                <div class="checklist-item pending">Inbound rules 탭 → Edit inbound rules</div>
+                <div class="checklist-item pending">Add rule: TCP 4000, Source: 0.0.0.0/0</div>
+                <div class="checklist-item pending">Save rules 클릭</div>
+                <div class="checklist-item pending">웹 브라우저에서 접속 테스트</div>
+            </div>
+
+            <h3>2. 라즈베리파이 설정</h3>
+            <div class="checklist">
+                <div class="checklist-item pending">raspberry/ 폴더를 라즈베리파이로 전송</div>
+                <div class="checklist-item pending">I2C 활성화 (raspi-config)</div>
+                <div class="checklist-item pending">AHT20 센서 연결 (VCC, GND, SDA, SCL)</div>
+                <div class="checklist-item pending">./install.sh 실행</div>
+                <div class="checklist-item pending">python3 sensor_reader.py 센서 테스트</div>
+                <div class="checklist-item pending">python3 data_sender.py --once 전송 테스트</div>
+                <div class="checklist-item pending">Cron 작업 등록 (5분 주기)</div>
+            </div>
+
+            <!-- 다음 단계 -->
+            <div class="next-steps">
+                <h3>🎯 다음 단계</h3>
+                <ol>
+                    <li><strong>AWS Security Group에서 포트 4000 열기</strong> (필수!)</li>
+                    <li>웹 브라우저에서 http://3.35.139.224:4000/ 접속 확인</li>
+                    <li>테스트 데이터 API로 전송해보기</li>
+                    <li>라즈베리파이에 코드 업로드</li>
+                    <li>I2C 활성화 및 센서 연결</li>
+                    <li>Python 환경 설정 및 테스트</li>
+                    <li>Cron 작업 등록하여 자동 수집 시작</li>
+                    <li>24시간 모니터링 테스트</li>
+                </ol>
+            </div>
+
+            <!-- 개발 타임라인 -->
+            <h2>📅 개발 타임라인</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h4>Phase 1: 계획 수립 (20분)</h4>
+                    <ul>
+                        <li>사용자 요구사항 확인</li>
+                        <li>EC2 서버 현재 상태 파악</li>
+                        <li>프로젝트 계획서 작성</li>
+                        <li>질문사항 정리 및 답변 받기</li>
+                    </ul>
+                </div>
+                <div class="timeline-item">
+                    <h4>Phase 2: 서버 환경 구축 (30분)</h4>
+                    <ul>
+                        <li>MariaDB 설치</li>
+                        <li>데이터베이스 및 테이블 생성</li>
+                        <li>MySQL 사용자 생성</li>
+                    </ul>
+                </div>
+                <div class="timeline-item">
+                    <h4>Phase 3: 백엔드 개발 (40분)</h4>
+                    <ul>
+                        <li>Express 서버 구조 설계</li>
+                        <li>API 라우트 구현</li>
+                        <li>API Key 인증 미들웨어</li>
+                        <li>MySQL 연결 풀 설정</li>
+                    </ul>
+                </div>
+                <div class="timeline-item">
+                    <h4>Phase 4: 라즈베리파이 코드 (30분)</h4>
+                    <ul>
+                        <li>AHT20 센서 읽기 모듈</li>
+                        <li>데이터 전송 스크립트</li>
+                        <li>자동 설치 스크립트</li>
+                    </ul>
+                </div>
+                <div class="timeline-item">
+                    <h4>Phase 5: 웹 클라이언트 (40분)</h4>
+                    <ul>
+                        <li>HTML/CSS 대시보드 레이아웃</li>
+                        <li>Chart.js 차트 구현</li>
+                        <li>API 연동 및 데이터 표시</li>
+                        <li>반응형 디자인</li>
+                    </ul>
+                </div>
+                <div class="timeline-item">
+                    <h4>Phase 6: 배포 및 문서화 (40분)</h4>
+                    <ul>
+                        <li>EC2에 서버 배포</li>
+                        <li>PM2 설정</li>
+                        <li>배포 가이드 작성</li>
+                        <li>프로젝트 문서 업데이트</li>
+                        <li>HTML 보고서 작성</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 성능 및 용량 -->
+            <h2>📈 성능 및 용량 예측</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>항목</th>
+                        <th>값</th>
+                        <th>설명</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>수집 주기</strong></td>
+                        <td>5분</td>
+                        <td>하루 288회 수집</td>
+                    </tr>
+                    <tr>
+                        <td><strong>일간 데이터</strong></td>
+                        <td>288개 레코드</td>
+                        <td>약 20KB</td>
+                    </tr>
+                    <tr>
+                        <td><strong>월간 데이터</strong></td>
+                        <td>8,640개 레코드</td>
+                        <td>약 600KB</td>
+                    </tr>
+                    <tr>
+                        <td><strong>연간 데이터</strong></td>
+                        <td>105,120개 레코드</td>
+                        <td>약 7MB</td>
+                    </tr>
+                    <tr>
+                        <td><strong>서버 메모리</strong></td>
+                        <td>~30MB</td>
+                        <td>Node.js + PM2</td>
+                    </tr>
+                    <tr>
+                        <td><strong>CPU 사용률</strong></td>
+                        <td>< 1%</td>
+                        <td>유휴 상태</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- 보안 설정 -->
+            <h2>🔐 보안 설정</h2>
+            <div class="alert alert-info">
+                <h4>API Key 인증</h4>
+                <p><strong>키:</strong> raspberry-weather-key-2025-secure</p>
+                <p><strong>사용법:</strong> HTTP 헤더에 <code>X-API-Key</code>로 전송</p>
+                <p><strong>위치:</strong></p>
+                <ul>
+                    <li>서버: /home/ec2-user/weather-server/server/.env</li>
+                    <li>라즈베리파이: raspberry/config.json</li>
+                </ul>
+            </div>
+
+            <div class="alert alert-warning">
+                <h4>MySQL 접속 정보</h4>
+                <p><strong>호스트:</strong> localhost</p>
+                <p><strong>사용자:</strong> weather_user</p>
+                <p><strong>비밀번호:</strong> WeatherPass2025!</p>
+                <p><strong>데이터베이스:</strong> weather_db</p>
+            </div>
+
+            <!-- 서버 관리 -->
+            <h2>🖥️ 서버 관리 명령어</h2>
+
+            <h3>PM2 프로세스 관리</h3>
+            <div class="code-block">
+<span class="comment"># SSH 접속</span>
+ssh -i ~/.ssh/uttec-first-ec2.pem ec2-user@3.35.139.224
+
+<span class="comment"># 서버 상태 확인</span>
+pm2 status
+
+<span class="comment"># 로그 확인</span>
+pm2 logs weather-api
+
+<span class="comment"># 서버 재시작</span>
+pm2 restart weather-api
+
+<span class="comment"># 서버 중지</span>
+pm2 stop weather-api
+
+<span class="comment"># 서버 시작</span>
+pm2 start weather-api
+            </div>
+
+            <h3>MySQL 데이터베이스</h3>
+            <div class="code-block">
+<span class="comment"># MySQL 접속</span>
+sudo mysql weather_db
+
+<span class="comment"># 최근 10개 데이터 조회</span>
+SELECT * FROM weather_data ORDER BY timestamp DESC LIMIT <span class="number">10</span>;
+
+<span class="comment"># 데이터 개수 확인</span>
+SELECT COUNT(*) FROM weather_data;
+
+<span class="comment"># 통계 조회</span>
+SELECT
+    ROUND(AVG(temperature), <span class="number">2</span>) as avg_temp,
+    ROUND(AVG(humidity), <span class="number">2</span>) as avg_humidity,
+    COUNT(*) as total
+FROM weather_data;
+            </div>
+
+            <!-- 향후 개선 사항 -->
+            <h2>🚀 향후 개선 사항 (Phase 2)</h2>
+            <div class="info-grid">
+                <div class="info-card">
+                    <h4>🔄 실시간 업데이트</h4>
+                    <p>Socket.io로 자동 차트 갱신</p>
+                </div>
+                <div class="info-card">
+                    <h4>🔔 알람 시스템</h4>
+                    <p>온도/습도 임계값 알림</p>
+                </div>
+                <div class="info-card">
+                    <h4>📊 데이터 내보내기</h4>
+                    <p>CSV, Excel 다운로드</p>
+                </div>
+                <div class="info-card">
+                    <h4>🔒 HTTPS</h4>
+                    <p>Let's Encrypt SSL 인증서</p>
+                </div>
+                <div class="info-card">
+                    <h4>👥 다중 센서</h4>
+                    <p>여러 라즈베리파이 지원</p>
+                </div>
+                <div class="info-card">
+                    <h4>🌐 도메인</h4>
+                    <p>사용자 정의 도메인 연결</p>
+                </div>
+            </div>
+
+            <!-- 프로젝트 성과 -->
+            <h2>🎉 프로젝트 성과</h2>
+            <div class="alert alert-success">
+                <h3 style="margin-top: 0;">✅ MVP 개발 완료!</h3>
+                <ul style="font-size: 1.1em; line-height: 2;">
+                    <li>✓ 완전한 IoT 모니터링 시스템 구축</li>
+                    <li>✓ 라즈베리파이 - 클라우드 - 웹 3단계 아키텍처</li>
+                    <li>✓ 실시간 데이터 수집 및 시각화</li>
+                    <li>✓ 확장 가능한 구조 (다중 센서, 알람 등)</li>
+                    <li>✓ 체계적인 문서화 (Markdown + HTML)</li>
+                    <li>✓ PM2 자동 관리로 안정적 운영</li>
+                </ul>
+            </div>
+
+            <!-- 학습 내용 -->
+            <h2>🎓 이 프로젝트를 통해 학습한 것</h2>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <h4>문서화의 중요성</h4>
+                    <p>프로젝트 시작부터 체계적인 문서화를 통해 세션 중단 후에도 즉시 재개 가능</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>IoT 아키텍처 설계</h4>
+                    <p>센서 → 클라우드 → 웹의 3단계 구조와 각 계층의 역할 이해</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>RESTful API 설계</h4>
+                    <p>Express.js를 사용한 API 서버 구축 및 인증 구현</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>데이터 시각화</h4>
+                    <p>Chart.js를 활용한 실시간 차트 구현</p>
+                </div>
+                <div class="timeline-item">
+                    <h4>프로세스 관리</h4>
+                    <p>PM2를 통한 Node.js 애플리케이션 자동 관리</p>
+                </div>
+            </div>
+
+            <!-- 참고 자료 -->
+            <h2>📚 참고 자료</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>문서</th>
+                        <th>위치</th>
+                        <th>용도</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>프로젝트완료보고서.html</strong></td>
+                        <td>프로젝트 루트</td>
+                        <td>시각화된 완료 보고서 (이 문서)</td>
+                    </tr>
+                    <tr>
+                        <td><strong>PROJECT-SUMMARY.md</strong></td>
+                        <td>프로젝트 루트</td>
+                        <td>텍스트 기반 완료 요약</td>
+                    </tr>
+                    <tr>
+                        <td><strong>PROJECT-STATUS.md</strong></td>
+                        <td>프로젝트 루트</td>
+                        <td>실시간 프로젝트 상태</td>
+                    </tr>
+                    <tr>
+                        <td><strong>DEPLOYMENT.md</strong></td>
+                        <td>프로젝트 루트</td>
+                        <td>배포 및 운영 가이드</td>
+                    </tr>
+                    <tr>
+                        <td><strong>raspberry/README.md</strong></td>
+                        <td>raspberry/</td>
+                        <td>라즈베리파이 설정 가이드</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <footer>
+            <p><strong>🌡️ 라즈베리파이 온습도 모니터링 시스템</strong></p>
+            <p>완료 날짜: 2025년 11월 14일</p>
+            <p>© 2025 Weather Monitoring Project. All rights reserved.</p>
+            <p style="margin-top: 15px; font-size: 0.9em; opacity: 0.8;">
+                문의사항이 있으시면 DEPLOYMENT.md 또는 PROJECT-STATUS.md를 참조하세요.
+            </p>
+        </footer>
+    </div>
+</body>
+</html>

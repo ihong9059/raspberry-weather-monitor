@@ -1,0 +1,8 @@
+{
+  "api_url": "http://3.35.139.224:4000/api/weather/data",
+  "api_key": "raspberry-weather-key-2025-secure",
+  "sensor_id": "raspberry-pi-001",
+  "interval_minutes": 5,
+  "retry_attempts": 3,
+  "retry_delay_seconds": 10
+}

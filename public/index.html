@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>온습도 모니터링 대시보드</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+    <!-- 헤더 -->
+    <header>
+        <div class="container">
+            <h1>🌡️ 온습도 모니터링 시스템</h1>
+            <p class="subtitle">라즈베리파이 AHT20 센서</p>
+        </div>
+    </header>
+
+    <!-- 메인 콘텐츠 -->
+    <main class="container">
+        <!-- 현재 상태 카드 -->
+        <section class="current-status">
+            <div class="status-card temperature-card">
+                <div class="icon">🌡️</div>
+                <div class="content">
+                    <h3>현재 온도</h3>
+                    <div class="value" id="current-temperature">--</div>
+                    <div class="unit">°C</div>
+                </div>
+            </div>
+
+            <div class="status-card humidity-card">
+                <div class="icon">💧</div>
+                <div class="content">
+                    <h3>현재 습도</h3>
+                    <div class="value" id="current-humidity">--</div>
+                    <div class="unit">%</div>
+                </div>
+            </div>
+
+            <div class="status-card time-card">
+                <div class="icon">🕐</div>
+                <div class="content">
+                    <h3>최종 측정</h3>
+                    <div class="value small" id="last-update">측정 대기 중</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 통계 정보 -->
+        <section class="statistics">
+            <h2>📊 통계 정보</h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-label">평균 온도</span>
+                    <span class="stat-value" id="avg-temperature">--</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">최고 온도</span>
+                    <span class="stat-value" id="max-temperature">--</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">최저 온도</span>
+                    <span class="stat-value" id="min-temperature">--</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">평균 습도</span>
+                    <span class="stat-value" id="avg-humidity">--</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">최고 습도</span>
+                    <span class="stat-value" id="max-humidity">--</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">최저 습도</span>
+                    <span class="stat-value" id="min-humidity">--</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 기간 선택 -->
+        <section class="date-range">
+            <h2>📅 조회 기간</h2>
+            <div class="range-controls">
+                <div class="quick-buttons">
+                    <button class="btn btn-primary active" data-hours="24">최근 24시간</button>
+                    <button class="btn btn-primary" data-hours="48">최근 48시간</button>
+                    <button class="btn btn-primary" data-hours="168">최근 1주일</button>
+                </div>
+                <div class="custom-range">
+                    <label for="start-date">시작:</label>
+                    <input type="datetime-local" id="start-date">
+                    <label for="end-date">종료:</label>
+                    <input type="datetime-local" id="end-date">
+                    <button class="btn btn-secondary" id="apply-custom">적용</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 차트 -->
+        <section class="charts">
+            <div class="chart-container">
+                <h2>🌡️ 온도 변화</h2>
+                <canvas id="temperature-chart"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <h2>💧 습도 변화</h2>
+                <canvas id="humidity-chart"></canvas>
+            </div>
+        </section>
+
+        <!-- 새로고침 버튼 -->
+        <section class="actions">
+            <button class="btn btn-large btn-refresh" id="refresh-btn">
+                🔄 새로고침
+            </button>
+        </section>
+    </main>
+
+    <!-- 푸터 -->
+    <footer>
+        <div class="container">
+            <p>© 2025 라즈베리파이 온습도 모니터링 시스템</p>
+            <p class="server-status">
+                <span id="server-status">서버 상태 확인 중...</span>
+            </p>
+        </div>
+    </footer>
+
+    <script src="js/chart-config.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
