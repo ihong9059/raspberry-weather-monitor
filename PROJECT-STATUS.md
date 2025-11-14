@@ -332,9 +332,35 @@ DB_NAME=weather_db
 
 ---
 
-## 🐛 알려진 이슈
+## 🐛 알려진 이슈 및 주의사항
 
-- 없음 (개발 시작 전)
+### ⚠️ 회로도 분석 시 주의사항 (중요!)
+
+**문제**: 이전 세션들에서 ESP32-C3 GPIO 핀 배치를 반복적으로 잘못 표기
+
+**원인**:
+- PDF 회로도의 핀 번호 레이블을 시각적으로 오독
+- U1 ESP32C3-SuperMini 심볼의 오른쪽 핀들(9-16) 순서를 거꾸로 해석
+- Net label과 실제 GPIO 번호를 혼동
+- 회로도 심볼의 물리적 배치만 보고 논리적 연결을 확인하지 않음
+- 추측으로 핀 배치를 작성 (TX/RX 순서 등)
+
+**정확한 GPIO 핀맵** (esp32c3_ai_super.pdf 검증 완료):
+- **I2C**: GPIO6=SDA, GPIO7=SCL ✅
+- **UART**: GPIO20=RX, GPIO21=TX ✅
+- **SPI**: GPIO8=SCK, GPIO9=MISO, GPIO10=MOSI, GPIO4=SS
+- **입력**: GPIO5=SWITCH
+- **출력**: GPIO2=SPEAKER, GPIO3=DIN (WS2812)
+- **범용**: GPIO0=TP1, GPIO1=TP2
+
+**향후 회로도 분석 체크리스트**:
+1. 회로도 심볼의 각 핀 번호 정확히 확인
+2. 각 핀에서 나가는 net label 정확히 추적
+3. Net label이 연결된 실제 부품 확인
+4. 물리적 배치가 아닌 논리적 연결 우선
+5. **추측하지 말고 회로도에 명시된 정보만 사용!**
+
+**참고 문서**: `📄 ESP32C3-SuperMini-회로도분석.html` (오류 원인 상세 분석 포함)
 
 ---
 

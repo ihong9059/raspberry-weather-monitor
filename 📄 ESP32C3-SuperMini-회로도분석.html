@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ESP32-C3 SuperMini 회로도 분석</title>
+    <title>ESP32-C3 SuperMini 회로도 분석 (정확한 버전)</title>
     <style>
         * {
             margin: 0;
@@ -72,42 +72,6 @@
             margin: 25px 0 15px 0;
         }
 
-        .component-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin: 20px 0;
-        }
-
-        .component-card {
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .component-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 12px rgba(0,0,0,0.2);
-        }
-
-        .component-card h4 {
-            color: #667eea;
-            font-size: 1.2em;
-            margin-bottom: 10px;
-        }
-
-        .component-card .type {
-            display: inline-block;
-            background: #667eea;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            margin-bottom: 10px;
-        }
-
         .pin-table {
             width: 100%;
             border-collapse: collapse;
@@ -143,25 +107,6 @@
         .pin-table .function {
             color: #764ba2;
             font-weight: 500;
-        }
-
-        .connection-diagram {
-            background: white;
-            padding: 25px;
-            border-radius: 10px;
-            margin: 20px 0;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-
-        .connection-diagram pre {
-            font-family: 'Courier New', monospace;
-            font-size: 0.9em;
-            line-height: 1.8;
-            overflow-x: auto;
-            background: #f5f5f5;
-            padding: 20px;
-            border-radius: 5px;
-            border-left: 4px solid #667eea;
         }
 
         .highlight-box {
@@ -212,34 +157,52 @@
             color: #d63384;
         }
 
-        .schematic-info {
-            background: linear-gradient(135deg, #e0e7ff 0%, #f3e7ff 100%);
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-right: 10px;
+        }
+
+        .badge.i2c { background: #17a2b8; color: white; }
+        .badge.uart { background: #28a745; color: white; }
+        .badge.gpio { background: #6c757d; color: white; }
+        .badge.power { background: #dc3545; color: white; }
+
+        .warning-banner {
+            background: #fff3cd;
+            border: 3px solid #ffc107;
+            padding: 25px;
+            margin: 30px 0;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .warning-banner h3 {
+            color: #856404;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .connection-diagram {
+            background: white;
             padding: 25px;
             border-radius: 10px;
             margin: 20px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
         }
 
-        .schematic-info h4 {
-            color: #667eea;
-            margin-bottom: 15px;
-        }
-
-        .schematic-info table {
-            width: 100%;
-            background: white;
+        .connection-diagram pre {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 1.8;
+            overflow-x: auto;
+            background: #f5f5f5;
+            padding: 20px;
             border-radius: 5px;
-            overflow: hidden;
-        }
-
-        .schematic-info td {
-            padding: 10px 15px;
-            border-bottom: 1px solid #e0e0e0;
-        }
-
-        .schematic-info td:first-child {
-            font-weight: 600;
-            color: #667eea;
-            width: 30%;
+            border-left: 4px solid #667eea;
         }
 
         footer {
@@ -252,155 +215,50 @@
         footer p {
             margin: 5px 0;
         }
-
-        .badge {
-            display: inline-block;
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: 600;
-            margin-right: 10px;
-        }
-
-        .badge.i2c { background: #17a2b8; color: white; }
-        .badge.spi { background: #ffc107; color: #333; }
-        .badge.uart { background: #28a745; color: white; }
-        .badge.gpio { background: #6c757d; color: white; }
-        .badge.power { background: #dc3545; color: white; }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>🔌 ESP32-C3 SuperMini 회로도 분석</h1>
+            <h1>🔌 ESP32-C3 SuperMini 회로도 분석 (정확한 버전)</h1>
             <p class="subtitle">온습도 모니터링 시스템 하드웨어 상세 분석</p>
         </header>
 
         <div class="content">
-            <!-- 회로도 정보 -->
-            <div class="section">
-                <h2>📋 회로도 기본 정보</h2>
-                <div class="schematic-info">
-                    <h4>문서 메타데이터</h4>
-                    <table>
-                        <tr>
-                            <td>파일명</td>
-                            <td>esp32c3_ai_super.pdf</td>
-                        </tr>
-                        <tr>
-                            <td>회로도 버전</td>
-                            <td>V1.0</td>
-                        </tr>
-                        <tr>
-                            <td>생성일</td>
-                            <td>2025-08-05</td>
-                        </tr>
-                        <tr>
-                            <td>최종 업데이트</td>
-                            <td>2025-08-06</td>
-                        </tr>
-                        <tr>
-                            <td>보드명</td>
-                            <td>Board1</td>
-                        </tr>
-                        <tr>
-                            <td>설계 도구</td>
-                            <td>EasyEDA.com</td>
-                        </tr>
-                    </table>
-                </div>
+            <div class="warning-banner">
+                <h3>⚠️ 중요: 이전 문서 오류 정정</h3>
+                <p><strong>이전 회로도 분석에서 핀 배치를 잘못 표기했습니다!</strong></p>
+                <p>이 문서는 <code>esp32c3_ai_super.pdf</code> 회로도를 정확히 재분석한 버전입니다.</p>
+                <p><strong>주요 수정사항:</strong> GPIO20=RX (not TX), GPIO21=TX (not RX)</p>
             </div>
 
-            <!-- 주요 구성 요소 -->
+            <!-- ESP32C3 핀맵 -->
             <div class="section">
-                <h2>🔧 주요 구성 요소</h2>
+                <h2>📍 ESP32-C3 SuperMini 정확한 GPIO 핀맵</h2>
 
-                <div class="component-grid">
-                    <div class="component-card">
-                        <span class="type">MCU</span>
-                        <h4>U1: ESP32-C3 SuperMini</h4>
-                        <p><strong>핀 수:</strong> 16 pins</p>
-                        <p><strong>기능:</strong> 메인 마이크로컨트롤러</p>
-                        <p><strong>특징:</strong></p>
-                        <ul>
-                            <li>RISC-V 32-bit 프로세서</li>
-                            <li>WiFi + BLE 지원</li>
-                            <li>USB CDC 지원</li>
-                            <li>다양한 GPIO (16개)</li>
-                        </ul>
-                    </div>
-
-                    <div class="component-card">
-                        <span class="type">센서 (I2C)</span>
-                        <h4>U2: AHT20 (2542WR-04P)</h4>
-                        <p><strong>핀 수:</strong> 4 pins</p>
-                        <p><strong>인터페이스:</strong> I2C (0x38)</p>
-                        <p><strong>기능:</strong></p>
-                        <ul>
-                            <li>온도 측정 (±0.3°C)</li>
-                            <li>습도 측정 (±2% RH)</li>
-                            <li>저전력 동작</li>
-                        </ul>
-                    </div>
-
-                    <div class="component-card">
-                        <span class="type">디스플레이 (I2C)</span>
-                        <h4>U3: OLED (2542WR-04P)</h4>
-                        <p><strong>핀 수:</strong> 4 pins</p>
-                        <p><strong>인터페이스:</strong> I2C</p>
-                        <p><strong>용도:</strong> 시각적 데이터 표시</p>
-                        <p><strong>참고:</strong> 현재 프로젝트에서 미사용</p>
-                    </div>
-
-                    <div class="component-card">
-                        <span class="type">LED (SPI)</span>
-                        <h4>U4: WS2812 RGB LED</h4>
-                        <p><strong>핀 수:</strong> 4 pins</p>
-                        <p><strong>제어:</strong> DIN (Data Input)</p>
-                        <p><strong>전원:</strong> 5V</p>
-                        <p><strong>용도:</strong> 상태 표시등</p>
-                    </div>
-
-                    <div class="component-card">
-                        <span class="type">입력</span>
-                        <h4>SW1: 택트 스위치 (TS-1088-AR02016)</h4>
-                        <p><strong>연결:</strong> SWITCH 신호</p>
-                        <p><strong>Pull-up:</strong> R1 (10K)</p>
-                        <p><strong>기능:</strong> 사용자 입력</p>
-                    </div>
-
-                    <div class="component-card">
-                        <span class="type">출력</span>
-                        <h4>BUZZER1: 부저</h4>
-                        <p><strong>주파수:</strong> 2.7kHz</p>
-                        <p><strong>제어:</strong> Q1 (BCX56 트랜지스터)</p>
-                        <p><strong>Pull-up:</strong> R3 (10K)</p>
-                        <p><strong>기능:</strong> 알림 소리</p>
-                    </div>
+                <div class="highlight-box important">
+                    <h4>⚠️ 왜 이전에 잘못 표기했나?</h4>
+                    <p><strong>원인:</strong> PDF 회로도의 핀 번호 레이블을 시각적으로 오독했습니다.</p>
+                    <p><strong>문제점:</strong></p>
+                    <ul>
+                        <li>회로도에서 U1 핀 배치를 좌→우, 위→아래 순서로 잘못 읽음</li>
+                        <li>특히 오른쪽 핀들(9-16)의 순서를 거꾸로 해석</li>
+                        <li>TX/RX 표기가 회로도 net label과 실제 GPIO 번호를 혼동</li>
+                    </ul>
+                    <p><strong>해결:</strong> 회로도의 각 핀에 직접 연결된 net label을 정확히 추적하여 재작성</p>
+                    <p><strong>PROJECT-STATUS.md에 기록:</strong> 향후 세션에서 회로도 분석 시 주의사항 명시</p>
                 </div>
 
-                <h3>수동 소자</h3>
-                <ul>
-                    <li><strong>R1:</strong> 10K Ω (스위치 풀업)</li>
-                    <li><strong>R2:</strong> 10K Ω (I2C SDA 풀업)</li>
-                    <li><strong>R3:</strong> 10K Ω (부저 베이스 풀업)</li>
-                    <li><strong>C1:</strong> 100nF (디커플링 커패시터)</li>
-                    <li><strong>Q1:</strong> BCX56 (NPN 트랜지스터, 부저 드라이버)</li>
-                </ul>
-            </div>
-
-            <!-- GPIO 핀 배치 -->
-            <div class="section">
-                <h2>📍 ESP32-C3 SuperMini GPIO 핀맵</h2>
+                <h3>ESP32C3-SuperMini 핀 배치 (회로도 기준)</h3>
 
                 <table class="pin-table">
                     <thead>
                         <tr>
                             <th>핀 번호</th>
                             <th>GPIO</th>
-                            <th>현재 사용 기능</th>
+                            <th>회로도 연결 (Net Label)</th>
                             <th>연결 대상</th>
-                            <th>프로토콜</th>
+                            <th>프로토콜/용도</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -409,91 +267,91 @@
                             <td class="gpio-pin">GPIO5</td>
                             <td class="function">SWITCH</td>
                             <td>SW1 (택트 스위치)</td>
-                            <td><span class="badge gpio">GPIO</span></td>
+                            <td><span class="badge gpio">GPIO 입력</span></td>
                         </tr>
                         <tr style="background: #e7f3ff;">
                             <td>2</td>
                             <td class="gpio-pin">GPIO6</td>
-                            <td class="function">I2C SDA ⭐</td>
+                            <td class="function">SDA ⭐</td>
                             <td>AHT20 SDA, OLED SDA</td>
-                            <td><span class="badge i2c">I2C</span></td>
+                            <td><span class="badge i2c">I2C Data</span></td>
                         </tr>
                         <tr style="background: #e7f3ff;">
                             <td>3</td>
                             <td class="gpio-pin">GPIO7</td>
-                            <td class="function">I2C SCL ⭐</td>
+                            <td class="function">SCL ⭐</td>
                             <td>AHT20 SCL, OLED SCL</td>
-                            <td><span class="badge i2c">I2C</span></td>
+                            <td><span class="badge i2c">I2C Clock</span></td>
                         </tr>
                         <tr>
                             <td>4</td>
                             <td class="gpio-pin">GPIO8</td>
                             <td class="function">SCK</td>
-                            <td>SPI Clock (테스트 포인트)</td>
-                            <td><span class="badge spi">SPI</span></td>
+                            <td>테스트 포인트</td>
+                            <td><span class="badge gpio">예비 (SPI Clock)</span></td>
                         </tr>
                         <tr>
                             <td>5</td>
                             <td class="gpio-pin">GPIO9</td>
                             <td class="function">MISO</td>
-                            <td>SPI Master In (테스트 포인트)</td>
-                            <td><span class="badge spi">SPI</span></td>
+                            <td>테스트 포인트</td>
+                            <td><span class="badge gpio">예비 (SPI MISO)</span></td>
                         </tr>
                         <tr>
                             <td>6</td>
                             <td class="gpio-pin">GPIO10</td>
                             <td class="function">MOSI</td>
-                            <td>SPI Master Out (테스트 포인트)</td>
-                            <td><span class="badge spi">SPI</span></td>
+                            <td>테스트 포인트</td>
+                            <td><span class="badge gpio">예비 (SPI MOSI)</span></td>
                         </tr>
-                        <tr>
+                        <tr style="background: #e7ffe7;">
                             <td>7</td>
                             <td class="gpio-pin">GPIO20</td>
-                            <td class="function">TX</td>
-                            <td>UART Transmit (테스트 포인트)</td>
-                            <td><span class="badge uart">UART</span></td>
+                            <td class="function">RX ✅</td>
+                            <td>테스트 포인트</td>
+                            <td><span class="badge uart">UART Receive</span></td>
                         </tr>
-                        <tr>
+                        <tr style="background: #e7ffe7;">
                             <td>8</td>
                             <td class="gpio-pin">GPIO21</td>
-                            <td class="function">RX</td>
-                            <td>UART Receive (테스트 포인트)</td>
-                            <td><span class="badge uart">UART</span></td>
+                            <td class="function">TX ✅</td>
+                            <td>테스트 포인트</td>
+                            <td><span class="badge uart">UART Transmit</span></td>
                         </tr>
                         <tr>
                             <td>9</td>
                             <td class="gpio-pin">GPIO0</td>
                             <td class="function">TP1</td>
                             <td>테스트 포인트 1</td>
-                            <td><span class="badge gpio">GPIO</span></td>
+                            <td><span class="badge gpio">범용 GPIO</span></td>
                         </tr>
                         <tr>
                             <td>10</td>
                             <td class="gpio-pin">GPIO1</td>
                             <td class="function">TP2</td>
                             <td>테스트 포인트 2</td>
-                            <td><span class="badge gpio">GPIO</span></td>
+                            <td><span class="badge gpio">범용 GPIO</span></td>
                         </tr>
                         <tr>
                             <td>11</td>
                             <td class="gpio-pin">GPIO2</td>
                             <td class="function">SPEAKER</td>
-                            <td>부저 제어 (Q1 베이스)</td>
-                            <td><span class="badge gpio">GPIO</span></td>
+                            <td>Q1 (트랜지스터) → BUZZER</td>
+                            <td><span class="badge gpio">GPIO 출력</span></td>
                         </tr>
                         <tr>
                             <td>12</td>
                             <td class="gpio-pin">GPIO3</td>
                             <td class="function">DIN</td>
                             <td>WS2812 LED Data In</td>
-                            <td><span class="badge gpio">GPIO</span></td>
+                            <td><span class="badge gpio">GPIO 출력</span></td>
                         </tr>
                         <tr>
                             <td>13</td>
                             <td class="gpio-pin">GPIO4</td>
                             <td class="function">SS</td>
-                            <td>SPI Slave Select</td>
-                            <td><span class="badge spi">SPI</span></td>
+                            <td>테스트 포인트</td>
+                            <td><span class="badge gpio">예비 (SPI SS)</span></td>
                         </tr>
                         <tr>
                             <td>14</td>
@@ -515,19 +373,33 @@
                         </tr>
                     </tbody>
                 </table>
-            </div>
-
-            <!-- I2C 연결 상세 -->
-            <div class="section">
-                <h2>🔗 I2C 버스 연결 상세 (핵심!)</h2>
 
                 <div class="highlight-box success">
-                    <h4>✅ 현재 프로젝트에서 사용 중인 I2C 구성</h4>
-                    <p><strong>I2C Master:</strong> ESP32-C3 SuperMini</p>
-                    <p><strong>I2C Slave:</strong> AHT20 온습도 센서 (주소: 0x38)</p>
-                    <p><strong>SDA:</strong> GPIO6</p>
-                    <p><strong>SCL:</strong> GPIO7</p>
-                    <p><strong>풀업 저항:</strong> R2 = 10K Ω (SDA에만 표시됨, SCL도 풀업 필요)</p>
+                    <h4>✅ 정확한 UART 연결</h4>
+                    <ul>
+                        <li><strong>GPIO20 (핀7):</strong> RX (Receive) - 데이터 수신</li>
+                        <li><strong>GPIO21 (핀8):</strong> TX (Transmit) - 데이터 송신</li>
+                    </ul>
+                    <p><strong>참고:</strong> 일반적인 UART 통신에서 크로스 연결 필요</p>
+                    <ul>
+                        <li>ESP32 TX → 상대방 RX</li>
+                        <li>ESP32 RX → 상대방 TX</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- I2C 연결 -->
+            <div class="section">
+                <h2>🔗 I2C 버스 연결 (AHT20 센서)</h2>
+
+                <div class="highlight-box success">
+                    <h4>✅ 현재 프로젝트에서 사용 중 (정확)</h4>
+                    <ul>
+                        <li><strong>SDA:</strong> GPIO6 (핀2)</li>
+                        <li><strong>SCL:</strong> GPIO7 (핀3)</li>
+                        <li><strong>센서:</strong> AHT20 (I2C 주소 0x38)</li>
+                        <li><strong>풀업:</strong> R2 = 10K Ω</li>
+                    </ul>
                 </div>
 
                 <div class="connection-diagram">
@@ -536,29 +408,79 @@
 ESP32-C3 SuperMini                      AHT20 센서
 ┌─────────────────┐                     ┌──────────┐
 │                 │                     │          │
-│  GPIO6 (SDA) ───┼─────────────────────┼─ SDA    │
-│                 │         ↑           │          │
+│  핀2 GPIO6  ────┼─────────────────────┼─ SDA    │
+│      (SDA)      │         ↑           │   (핀2)  │
 │                 │      10K (R2)       │          │
 │                 │         │           │          │
-│  GPIO7 (SCL) ───┼─────────────────────┼─ SCL    │
+│  핀3 GPIO7  ────┼─────────────────────┼─ SCL    │
+│      (SCL)      │                     │   (핀3)  │
 │                 │                     │          │
-│  3V3 ───────────┼─────────────────────┼─ VCC    │
+│  핀14 3V3   ────┼─────────────────────┼─ VCC    │
+│                 │                     │   (핀1)  │
 │                 │                     │          │
-│  GND ───────────┼─────────────────────┼─ GND    │
-│                 │                     │          │
+│  핀15 GND   ────┼─────────────────────┼─ GND    │
+│                 │                     │   (핀4)  │
 └─────────────────┘                     └──────────┘
 
-I2C 주소: 0x38 (AHT20)
+I2C 주소: 0x38
 속도: 100kHz (표준) 또는 400kHz (고속)
                     </pre>
                 </div>
+            </div>
 
-                <h3>OLED 디스플레이 (미사용)</h3>
-                <p>회로도에는 OLED 디스플레이(U3)도 같은 I2C 버스에 연결되어 있으나, 현재 프로젝트에서는 사용하지 않습니다.</p>
+            <!-- 주요 구성 요소 -->
+            <div class="section">
+                <h2>🔧 회로도의 주요 구성 요소</h2>
+
+                <h3>1. ESP32-C3 SuperMini (U1)</h3>
                 <ul>
-                    <li>동일한 I2C 버스 사용 (GPIO6=SDA, GPIO7=SCL)</li>
-                    <li>OLED 주소는 보통 0x3C 또는 0x3D</li>
-                    <li>향후 확장 시 활용 가능</li>
+                    <li>16핀 모듈</li>
+                    <li>RISC-V 32-bit 프로세서</li>
+                    <li>WiFi + BLE 내장</li>
+                    <li>USB CDC 지원 (시리얼 통신)</li>
+                </ul>
+
+                <h3>2. AHT20 온습도 센서 (U2)</h3>
+                <ul>
+                    <li>4핀 I2C 센서 (2542WR-04P 커넥터)</li>
+                    <li>핀1: VDD (3.3V)</li>
+                    <li>핀2: SDA → GPIO6</li>
+                    <li>핀3: SCL → GPIO7</li>
+                    <li>핀4: VSS (GND)</li>
+                </ul>
+
+                <h3>3. OLED 디스플레이 (U3)</h3>
+                <ul>
+                    <li>4핀 I2C 디스플레이 (2542WR-04P 커넥터)</li>
+                    <li>같은 I2C 버스 공유 (GPIO6, GPIO7)</li>
+                    <li>현재 프로젝트에서 미사용</li>
+                </ul>
+
+                <h3>4. WS2812 RGB LED (U4)</h3>
+                <ul>
+                    <li>GPIO3 (DIN)으로 제어</li>
+                    <li>5V 전원 사용</li>
+                </ul>
+
+                <h3>5. 택트 스위치 (SW1)</h3>
+                <ul>
+                    <li>GPIO5 연결</li>
+                    <li>R1 (10K) 풀업</li>
+                    <li>C1 (100nF) 디바운싱</li>
+                </ul>
+
+                <h3>6. 부저 (BUZZER1)</h3>
+                <ul>
+                    <li>GPIO2 → Q1 (BCX56 트랜지스터) → BUZZER</li>
+                    <li>R3 (10K) 풀업</li>
+                    <li>2.7kHz 공진 주파수</li>
+                </ul>
+
+                <h3>7. 테스트 포인트 (TP1-TP8)</h3>
+                <ul>
+                    <li>TP1: GPIO0</li>
+                    <li>TP2: GPIO1</li>
+                    <li>TP3-TP8: TX, RX, SCK, MISO, MOSI, SS</li>
                 </ul>
             </div>
 
@@ -567,264 +489,133 @@ I2C 주소: 0x38 (AHT20)
                 <h2>⚡ 전원 구조</h2>
 
                 <div class="connection-diagram">
-                    <h4>전원 분배도</h4>
                     <pre>
-USB 5V (16번 핀)
+USB 5V (핀16)
     │
-    ├─ ESP32-C3 내부 레귤레이터 → 3.3V (14번 핀)
+    ├─ ESP32-C3 내부 레귤레이터 → 3.3V (핀14)
     │                                  │
     │                                  ├─ AHT20 (VCC)
     │                                  ├─ OLED (VCC)
-    │                                  ├─ R2 (10K 풀업)
+    │                                  ├─ R1, R2, R3 (풀업)
     │                                  └─ 기타 3.3V 디바이스
     │
     └─ WS2812 LED (5V 직접 공급)
 
-GND (15번 핀) - 공통 접지
-    ├─ AHT20
-    ├─ OLED
-    ├─ WS2812
-    ├─ SW1
-    ├─ C1
-    └─ Q1 (이미터)
+GND (핀15) - 공통 접지
                     </pre>
                 </div>
+            </div>
 
+            <!-- 오류 원인 분석 -->
+            <div class="section">
+                <h2>🔍 이전 오류 원인 상세 분석</h2>
+
+                <h3>1. 핀 배치 오독 원인</h3>
                 <div class="highlight-box important">
-                    <h4>⚠️ 전원 관련 주의사항</h4>
+                    <h4>PDF 회로도 시각적 해석 오류</h4>
+                    <p><strong>문제:</strong> U1 ESP32C3-SuperMini 심볼에서 핀 번호와 라벨을 잘못 읽음</p>
                     <ul>
-                        <li><strong>5V 입력:</strong> USB 케이블을 통해 공급 (최대 500mA)</li>
-                        <li><strong>3.3V 출력:</strong> ESP32-C3 내장 레귤레이터에서 공급 (최대 600mA)</li>
-                        <li><strong>WS2812:</strong> 5V 직접 공급 (LED 1개당 최대 60mA)</li>
-                        <li><strong>디커플링:</strong> C1(100nF)로 노이즈 감소</li>
+                        <li><strong>오류 1:</strong> 오른쪽 핀들(9-16)의 순서를 위→아래가 아닌 아래→위로 읽음</li>
+                        <li><strong>오류 2:</strong> Net label "TX", "RX"와 실제 GPIO 번호를 혼동</li>
+                        <li><strong>오류 3:</strong> 회로도 심볼의 물리적 배치만 보고 논리적 연결을 확인하지 않음</li>
                     </ul>
                 </div>
-            </div>
 
-            <!-- 기타 주변 장치 -->
-            <div class="section">
-                <h2>🎛️ 기타 주변 장치</h2>
-
-                <h3>1. 택트 스위치 (SW1)</h3>
-                <ul>
-                    <li><strong>GPIO:</strong> GPIO5 (SWITCH)</li>
-                    <li><strong>회로:</strong> Active-Low (눌렀을 때 GND 연결)</li>
-                    <li><strong>풀업:</strong> R1 (10K Ω)</li>
-                    <li><strong>디바운싱:</strong> C1 (100nF) 커패시터</li>
-                    <li><strong>용도:</strong> 사용자 입력, 모드 전환, 리셋 등</li>
-                </ul>
-
-                <h3>2. WS2812 RGB LED (U4)</h3>
-                <ul>
-                    <li><strong>GPIO:</strong> GPIO3 (DIN)</li>
-                    <li><strong>프로토콜:</strong> Single-wire serial (NZR)</li>
-                    <li><strong>전원:</strong> 5V (직접 공급)</li>
-                    <li><strong>제어:</strong> FastLED 또는 Adafruit NeoPixel 라이브러리</li>
-                    <li><strong>용도:</strong> 상태 표시, 알림, 시각적 피드백</li>
-                </ul>
-
-                <h3>3. 부저 (BUZZER1)</h3>
-                <ul>
-                    <li><strong>GPIO:</strong> GPIO2 (SPEAKER)</li>
-                    <li><strong>주파수:</strong> 2.7kHz (공진 주파수)</li>
-                    <li><strong>드라이버:</strong> Q1 (BCX56 NPN 트랜지스터)</li>
-                    <li><strong>제어:</strong> PWM 또는 디지털 ON/OFF</li>
-                    <li><strong>용도:</strong> 알람, 경고음, 피드백</li>
-                </ul>
-
-                <h3>4. SPI 테스트 포인트</h3>
-                <p>SPI 인터페이스용 GPIO가 할당되어 있으나 현재 미사용:</p>
-                <ul>
-                    <li><strong>SCK:</strong> GPIO8</li>
-                    <li><strong>MISO:</strong> GPIO9</li>
-                    <li><strong>MOSI:</strong> GPIO10</li>
-                    <li><strong>SS:</strong> GPIO4</li>
-                </ul>
-                <p>향후 SPI 센서나 SD 카드 등 확장 가능</p>
-
-                <h3>5. UART 테스트 포인트</h3>
-                <ul>
-                    <li><strong>TX:</strong> GPIO20</li>
-                    <li><strong>RX:</strong> GPIO21</li>
-                    <li><strong>용도:</strong> 시리얼 통신, 디버깅, 외부 장치 통신</li>
-                </ul>
-            </div>
-
-            <!-- 확장 가능성 -->
-            <div class="section">
-                <h2>🚀 향후 확장 가능성</h2>
-
-                <h3>1. I2C 버스 확장</h3>
+                <h3>2. TX/RX 혼동</h3>
                 <div class="highlight-box">
-                    <h4>추가 가능한 I2C 디바이스</h4>
+                    <h4>표기 방식 차이</h4>
                     <ul>
-                        <li><strong>OLED 디스플레이:</strong> 이미 회로도에 포함 (U3), 주소 0x3C/0x3D</li>
-                        <li><strong>BME280:</strong> 기압 센서 (주소 0x76/0x77)</li>
-                        <li><strong>MPU6050:</strong> 6축 가속도/자이로 센서 (주소 0x68/0x69)</li>
-                        <li><strong>RTC (DS3231):</strong> 실시간 시계 (주소 0x68)</li>
-                        <li><strong>EEPROM:</strong> 비휘발성 메모리</li>
+                        <li><strong>회로도:</strong> GPIO20=RX, GPIO21=TX (ESP32 관점)</li>
+                        <li><strong>오류:</strong> 일반적인 순서(TX가 더 작은 번호)로 추측하여 반대로 표기</li>
+                        <li><strong>교훈:</strong> 회로도의 net label을 정확히 추적해야 함</li>
                     </ul>
-                    <p><strong>주의:</strong> I2C 주소 충돌을 피하고, 버스 커패시턴스 고려 필요</p>
                 </div>
 
-                <h3>2. SPI 인터페이스 활용</h3>
-                <ul>
-                    <li><strong>SD 카드:</strong> 데이터 로깅</li>
-                    <li><strong>LoRa 모듈:</strong> 장거리 통신</li>
-                    <li><strong>고속 센서:</strong> IMU, 압력 센서 등</li>
-                </ul>
+                <h3>3. 향후 방지 대책</h3>
+                <div class="highlight-box success">
+                    <h4>✅ 회로도 분석 체크리스트</h4>
+                    <ol>
+                        <li>회로도 심볼의 각 핀 번호 확인</li>
+                        <li>각 핀에서 나가는 net label 정확히 추적</li>
+                        <li>Net label이 연결된 실제 부품 확인</li>
+                        <li>물리적 배치가 아닌 논리적 연결 우선</li>
+                        <li>추측하지 않고 회로도에 명시된 정보만 사용</li>
+                    </ol>
+                </div>
 
-                <h3>3. 추가 GPIO 활용</h3>
-                <p>현재 미사용 GPIO:</p>
-                <ul>
-                    <li><strong>GPIO0, GPIO1:</strong> 테스트 포인트 (범용 I/O)</li>
-                    <li>추가 버튼, LED, 릴레이 등 연결 가능</li>
-                </ul>
-
-                <h3>4. WiFi/BLE 기능</h3>
-                <ul>
-                    <li><strong>WiFi:</strong> 현재 사용 중 (EC2 서버 통신은 Raspberry Pi 경유)</li>
-                    <li><strong>BLE:</strong> 스마트폰 앱 연동 가능</li>
-                    <li><strong>MQTT:</strong> IoT 클라우드 플랫폼 연동</li>
-                </ul>
+                <h3>4. PROJECT-STATUS.md 기록사항</h3>
+                <div class="highlight-box">
+                    <h4>향후 세션에서 참고할 내용</h4>
+                    <ul>
+                        <li><strong>I2C:</strong> GPIO6=SDA, GPIO7=SCL (확정)</li>
+                        <li><strong>UART:</strong> GPIO20=RX, GPIO21=TX (확정)</li>
+                        <li><strong>회로도 파일:</strong> esp32c3_ai_super.pdf (검증됨)</li>
+                        <li><strong>주의:</strong> PDF 회로도 시각적 해석 시 net label 정확히 추적 필요</li>
+                        <li><strong>교훈:</strong> 추측하지 말고 회로도 정보만 사용</li>
+                    </ul>
+                </div>
             </div>
 
-            <!-- 핀 사용 현황 요약 -->
+            <!-- 정확한 요약 -->
             <div class="section">
-                <h2>📊 GPIO 사용 현황 요약</h2>
+                <h2>📊 정확한 GPIO 사용 현황</h2>
 
                 <table class="pin-table">
                     <thead>
                         <tr>
-                            <th>카테고리</th>
-                            <th>GPIO</th>
+                            <th>기능</th>
+                            <th>GPIO 핀</th>
                             <th>사용 상태</th>
+                            <th>비고</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td><span class="badge i2c">I2C</span></td>
                             <td>GPIO6 (SDA), GPIO7 (SCL)</td>
-                            <td>✅ <strong>사용 중</strong> (AHT20)</td>
-                        </tr>
-                        <tr>
-                            <td><span class="badge spi">SPI</span></td>
-                            <td>GPIO8, GPIO9, GPIO10, GPIO4</td>
-                            <td>⚪ 미사용 (확장 가능)</td>
+                            <td>✅ 사용 중</td>
+                            <td>AHT20 센서 연결</td>
                         </tr>
                         <tr>
                             <td><span class="badge uart">UART</span></td>
-                            <td>GPIO20 (TX), GPIO21 (RX)</td>
-                            <td>⚪ 미사용 (확장 가능)</td>
+                            <td>GPIO20 (RX), GPIO21 (TX)</td>
+                            <td>⚪ 예비</td>
+                            <td>테스트 포인트</td>
+                        </tr>
+                        <tr>
+                            <td><span class="badge gpio">SPI</span></td>
+                            <td>GPIO8, 9, 10, 4</td>
+                            <td>⚪ 예비</td>
+                            <td>SCK, MISO, MOSI, SS</td>
                         </tr>
                         <tr>
                             <td><span class="badge gpio">입력</span></td>
-                            <td>GPIO5 (SWITCH)</td>
-                            <td>✅ 사용 중 (택트 스위치)</td>
+                            <td>GPIO5</td>
+                            <td>✅ 사용 중</td>
+                            <td>택트 스위치</td>
                         </tr>
                         <tr>
                             <td><span class="badge gpio">출력</span></td>
-                            <td>GPIO2 (SPEAKER), GPIO3 (DIN)</td>
-                            <td>✅ 사용 중 (부저, LED)</td>
+                            <td>GPIO2, GPIO3</td>
+                            <td>✅ 사용 중</td>
+                            <td>부저, LED</td>
                         </tr>
                         <tr>
                             <td><span class="badge gpio">범용</span></td>
                             <td>GPIO0, GPIO1</td>
-                            <td>⚪ 미사용 (테스트 포인트)</td>
+                            <td>⚪ 예비</td>
+                            <td>테스트 포인트</td>
                         </tr>
                     </tbody>
                 </table>
-
-                <div class="highlight-box success">
-                    <h4>✅ 온습도 모니터링 프로젝트 핀 사용</h4>
-                    <p><strong>필수 핀:</strong></p>
-                    <ul>
-                        <li>GPIO6: I2C SDA (AHT20)</li>
-                        <li>GPIO7: I2C SCL (AHT20)</li>
-                        <li>USB: 시리얼 통신 (Raspberry Pi로 데이터 전송)</li>
-                    </ul>
-                    <p><strong>선택 핀 (현재 미사용):</strong></p>
-                    <ul>
-                        <li>GPIO2: 부저 (향후 알람 기능)</li>
-                        <li>GPIO3: WS2812 LED (향후 상태 표시)</li>
-                        <li>GPIO5: 스위치 (향후 수동 조작)</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- 회로 설계 특징 -->
-            <div class="section">
-                <h2>💡 회로 설계 주요 특징</h2>
-
-                <h3>1. 풀업 저항 구성</h3>
-                <ul>
-                    <li><strong>R1 (10K):</strong> 스위치 풀업 - GPIO5를 기본 HIGH 상태로 유지</li>
-                    <li><strong>R2 (10K):</strong> I2C SDA 풀업 - I2C 통신 신호 안정화</li>
-                    <li><strong>R3 (10K):</strong> 트랜지스터 베이스 풀업 - 부저 제어 안정화</li>
-                </ul>
-
-                <h3>2. 디커플링 커패시터</h3>
-                <ul>
-                    <li><strong>C1 (100nF):</strong> 스위치 디바운싱 및 전원 노이즈 필터링</li>
-                    <li>VCC와 GND 사이 배치로 고주파 노이즈 제거</li>
-                </ul>
-
-                <h3>3. 트랜지스터 드라이버</h3>
-                <ul>
-                    <li><strong>Q1 (BCX56):</strong> NPN 트랜지스터로 부저 구동</li>
-                    <li>GPIO2의 약한 전류를 증폭하여 부저 구동</li>
-                    <li>Base - GPIO2, Collector - BUZZER, Emitter - GND</li>
-                </ul>
-
-                <h3>4. 테스트 포인트</h3>
-                <ul>
-                    <li><strong>TP1 ~ TP8:</strong> 디버깅 및 확장용 테스트 포인트</li>
-                    <li>프로브 연결, 점퍼선 납땜, 확장 커넥터 등으로 활용</li>
-                </ul>
-            </div>
-
-            <!-- 문제 해결 -->
-            <div class="section">
-                <h2>🔍 문제 해결 가이드</h2>
-
-                <h3>I2C 통신 문제</h3>
-                <div class="highlight-box important">
-                    <h4>⚠️ 증상: AHT20 센서 초기화 실패</h4>
-                    <p><strong>확인 사항:</strong></p>
-                    <ul>
-                        <li>✅ SDA 연결: GPIO6 ↔ AHT20 핀2</li>
-                        <li>✅ SCL 연결: GPIO7 ↔ AHT20 핀3</li>
-                        <li>✅ VCC 연결: 3.3V ↔ AHT20 핀1</li>
-                        <li>✅ GND 연결: GND ↔ AHT20 핀4</li>
-                        <li>✅ 풀업 저항 R2 (10K) 확인</li>
-                        <li>✅ 점퍼선 접촉 불량 확인</li>
-                    </ul>
-                </div>
-
-                <h3>펌웨어 업로드 문제</h3>
-                <div class="highlight-box">
-                    <h4>💡 해결 방법</h4>
-                    <ul>
-                        <li><strong>USB CDC On Boot:</strong> 반드시 Enabled 설정</li>
-                        <li><strong>BOOT 모드:</strong> BOOT 버튼 누른 상태로 업로드</li>
-                        <li><strong>포트 권한:</strong> dialout 그룹 추가</li>
-                        <li><strong>케이블:</strong> 데이터 통신 지원 USB 케이블 사용</li>
-                    </ul>
-                </div>
-
-                <h3>전원 문제</h3>
-                <ul>
-                    <li><strong>5V 부족:</strong> 고품질 USB 케이블 사용, 충분한 전류 공급</li>
-                    <li><strong>3.3V 불안정:</strong> 디커플링 커패시터 추가 (100nF, 10uF)</li>
-                    <li><strong>과전류:</strong> WS2812 LED 개수 제한 (최대 8~10개)</li>
-                </ul>
             </div>
         </div>
 
         <footer>
-            <p><strong>ESP32-C3 SuperMini 회로도 분석</strong></p>
-            <p>온습도 모니터링 시스템 - Hardware Documentation</p>
-            <p>최종 업데이트: 2025-11-15</p>
+            <p><strong>ESP32-C3 SuperMini 회로도 분석 (수정 버전)</strong></p>
+            <p>온습도 모니터링 시스템 - 정확한 하드웨어 문서</p>
+            <p>최초 작성: 2025-11-15 (오류 포함)</p>
+            <p>수정 완료: 2025-11-15 (오류 정정)</p>
             <p>© 2025 Weather Monitoring Project</p>
         </footer>
     </div>
