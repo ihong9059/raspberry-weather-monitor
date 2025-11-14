@@ -44,3 +44,15 @@ logs/
 # Temporary files
 *.tmp
 *.temp
+
+# ESP32/Zephyr build files
+esp32c3/zephyr-app/build/
+esp32c3/zephyr-app/.west/
+esp32c3/zephyr-app/zephyr/
+*.bin
+*.elf
+*.hex
+
+# Firmware files
+*.bin
+*.elf

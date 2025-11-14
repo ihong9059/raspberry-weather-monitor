@@ -2,7 +2,11 @@
   "api_url": "http://3.35.139.224:4000/api/weather/data",
   "api_key": "raspberry-weather-key-2025-secure",
   "sensor_id": "raspberry-pi-001",
+  "sensor_id_esp32": "esp32c3-001",
   "interval_minutes": 5,
   "retry_attempts": 3,
-  "retry_delay_seconds": 10
+  "retry_delay_seconds": 10,
+  "serial_port": "/dev/ttyACM0",
+  "baud_rate": 115200,
+  "flash_baudrate": 460800
 }

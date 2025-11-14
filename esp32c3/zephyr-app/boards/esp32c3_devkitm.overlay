@@ -1,0 +1,33 @@
+/*
+ * Device Tree Overlay for ESP32-C3 DevKitM
+ * AHT20 Sensor on I2C
+ *
+ * Pin Configuration:
+ * - I2C SDA: GPIO8
+ * - I2C SCL: GPIO9
+ */
+
+&i2c0 {
+    status = "okay";
+    clock-frequency = <I2C_BITRATE_STANDARD>;
+
+    /* AHT20 Sensor */
+    aht20@38 {
+        compatible = "aosong,aht20";
+        reg = <0x38>;
+        label = "AHT20";
+    };
+};
+
+/* Use GPIO8 and GPIO9 for I2C */
+&pinctrl {
+    i2c0_default: i2c0_default {
+        group1 {
+            pinmux = <I2C0_SDA_GPIO8>,
+                     <I2C0_SCL_GPIO9>;
+            bias-pull-up;
+            drive-open-drain;
+            output-high;
+        };
+    };
+};
