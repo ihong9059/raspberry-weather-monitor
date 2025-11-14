@@ -109,8 +109,8 @@ screen /dev/ttyACM0 115200
 
 | ESP32-C3 | AHT20 | 코드 |
 |----------|-------|------|
-| GPIO8    | SDA   | `#define SDA_PIN 8` |
-| GPIO9    | SCL   | `#define SCL_PIN 9` |
+| GPIO6    | SDA   | `#define SDA_PIN 6` |
+| GPIO7    | SCL   | `#define SCL_PIN 7` |
 | 3.3V     | VCC   | - |
 | GND      | GND   | - |
 

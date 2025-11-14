@@ -86,11 +86,20 @@ raspberry-weather-monitor/
 
 ## 🔧 기술 스택
 
+### ESP32-C3 (신규 - v2.0)
+- Arduino Framework
+- Zephyr RTOS (대안)
+- I2C 통신 (AHT20)
+- USB CDC Serial
+- **⚠️ 중요: USB CDC On Boot 반드시 활성화 필요!**
+
 ### 라즈베리파이
 - Python 3
-- `adafruit-circuitpython-aht20` (센서)
+- `pyserial` (ESP32 시리얼 통신)
+- `esptool` (ESP32 플래싱)
+- `adafruit-circuitpython-aht20` (직접 센서 연결 시)
 - `requests` (HTTP 통신)
-- `cron` (주기적 실행)
+- `systemd` (자동 시작)
 
 ### EC2 백엔드
 - Node.js + Express.js

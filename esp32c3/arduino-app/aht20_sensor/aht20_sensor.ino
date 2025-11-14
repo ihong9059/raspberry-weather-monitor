@@ -38,9 +38,9 @@
 // Data sampling interval (5 minutes in milliseconds)
 #define SAMPLE_INTERVAL_MS (5 * 60 * 1000)
 
-// I2C Pins for ESP32-C3
-#define SDA_PIN 8
-#define SCL_PIN 9
+// I2C Pins for ESP32-C3 SuperMini
+#define SDA_PIN 6
+#define SCL_PIN 7
 
 // Function prototypes
 bool aht20_init();
@@ -73,8 +73,8 @@ void setup() {
   } else {
     Serial.println("ERROR: Failed to initialize AHT20");
     Serial.println("Check I2C connections:");
-    Serial.println("  - SDA: GPIO8");
-    Serial.println("  - SCL: GPIO9");
+    Serial.println("  - SDA: GPIO6");
+    Serial.println("  - SCL: GPIO7");
     Serial.println("  - VCC: 3.3V");
     Serial.println("  - GND: GND");
   }
