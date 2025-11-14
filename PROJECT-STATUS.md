@@ -1,8 +1,9 @@
 # 라즈베리파이 온습도 모니터링 시스템 - 프로젝트 상태
 
-**마지막 업데이트**: 2025-11-14
-**버전**: 1.0
+**마지막 업데이트**: 2025-11-15
+**버전**: 1.1
 **작성자**: Claude Code Session
+**GitHub**: https://github.com/ihong9059/raspberry-weather-monitor
 
 ---
 
@@ -71,10 +72,13 @@ raspberry-weather-monitor/
 ├── 📄 프로젝트완료보고서.html      # 완료 보고서 (시각화)
 ├── 📄 배포가이드.html             # 배포 및 운영 (시각화)
 ├── 📄 라즈베리파이설정가이드.html  # 라즈베리파이 설정 (시각화)
+├── 📄 프로젝트히스토리.html        # 프로젝트 작업 히스토리 (시각화, 타임라인)
 ├── PROJECT-STATUS.md            # 이 파일
 ├── PROJECT-SUMMARY.md           # 프로젝트 요약
 ├── PROJECT-PLAN.md              # 전체 계획서
 ├── DEPLOYMENT.md                # 배포 가이드 (텍스트)
+├── GITHUB-CLI-GUIDE.md          # GitHub CLI 사용 가이드
+├── .gitignore                   # Git 제외 파일 목록
 └── README.md                    # 빠른 시작 가이드
 ```
 
@@ -240,6 +244,36 @@ X-API-Key: YOUR_API_KEY
 ---
 
 ## 📝 개발 작업 기록
+
+> **중요**: 모든 중요한 작업은 **프로젝트히스토리.html**에도 기록해주세요!
+>
+> ### 히스토리 기록 정책
+> - **언제**: 새로운 기능 개발, 중요 버그 수정, 배포/설정 변경, 문서 업데이트, 아키텍처 변경
+> - **어디에**: `프로젝트히스토리.html` (시각적 타임라인) + 이 섹션 (텍스트)
+> - **어떻게**: 날짜, 작업 제목, 세부 내용, 태그를 포함하여 기록
+> - **목적**: 다른 사람에게 설명하기 쉽게, 프로젝트 진행 과정 추적
+
+---
+
+### 2025-11-15 - 히스토리 문서화 시스템 구축
+- ✅ 프로젝트히스토리.html 생성 (타임라인 형식)
+- ✅ GITHUB-CLI-GUIDE.md 작성
+- ✅ PROJECT-STATUS.md 업데이트 (히스토리 기록 정책 추가)
+- ✅ 문서 구조 개선
+
+### 2025-11-15 - Git & GitHub 설정
+- ✅ Git 저장소 초기화
+- ✅ .gitignore 파일 생성
+- ✅ 초기 커밋 생성 (27개 파일)
+- ✅ GitHub 저장소 생성 및 푸시 (https://github.com/ihong9059/raspberry-weather-monitor)
+- ✅ GitHub CLI v2.83.1 설치 및 인증
+
+### 2025-11-15 - 프로젝트 구조 정리
+- ✅ 디렉토리 경로 표준화 (1113/raspberry-weather-monitor → raspberry-weather-monitor)
+- ✅ 모든 문서의 날짜 업데이트 (2024 → 2025)
+- ✅ API Key 및 비밀번호 업데이트 (2025 버전으로)
+- ✅ 15개 파일 수정 (MD, JSON, HTML 등)
+- ✅ 검증 완료 (2024 참조 0개, 잘못된 경로 0개)
 
 ### 2025-11-14 - MVP 개발 완료
 - ✅ 프로젝트 계획서 작성 (PROJECT-PLAN.md, README.md)

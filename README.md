@@ -43,6 +43,16 @@ raspberry-weather-monitor/
 - 🔌 API 설계
 - 🚀 배포 방법
 - 🔄 **다음 세션 시작 방법**
+- 📚 **히스토리 기록 정책**
+
+---
+
+## 📚 주요 문서
+
+- **[프로젝트히스토리.html](프로젝트히스토리.html)** - 프로젝트 작업 타임라인 (시각화)
+- **[GITHUB-CLI-GUIDE.md](GITHUB-CLI-GUIDE.md)** - GitHub CLI 설치 및 사용법
+- **[DEPLOYMENT.md](DEPLOYMENT.md)** - 배포 및 운영 가이드
+- **[PROJECT-SUMMARY.md](PROJECT-SUMMARY.md)** - 프로젝트 완료 요약
 
 ---
 
